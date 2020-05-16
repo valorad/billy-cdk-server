@@ -4,8 +4,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:35592",
-      "sslPort": 44344
+      "applicationUrl": "http://localhost:32110",
+      "sslPort": 44316
     }
   },
   "profiles": {
@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "BillyCDK": {
+    "App": {
       "commandName": "Project",
       "launchBrowser": false,
       "launchUrl": "api",
