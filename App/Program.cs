@@ -20,27 +20,30 @@ namespace App
         Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((hostingContext, config) =>
             {
-                config.Sources.Clear();
+              config.Sources.Clear();
 
-                var env = hostingContext.HostingEnvironment;
+              var env = hostingContext.HostingEnvironment;
 
-                
-                config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                      .AddJsonFile($"appsettings.{env.EnvironmentName}.json", 
-                                     optional: true, reloadOnChange: true);
 
-                config.AddYamlFile("secrets.yaml", optional: true);
+              // config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+              //       .AddJsonFile($"appsettings.{env.EnvironmentName}.json", 
+              //                      optional: true, reloadOnChange: true);
 
-                // config.AddJsonFile("MyConfig.json", optional: true, reloadOnChange: true)
-                //       .AddJsonFile($"MyConfig.{env.EnvironmentName}.json",
-                //                      optional: true, reloadOnChange: true);
+              config.AddYamlFile("appsettings.yaml", optional: true, reloadOnChange: true)
+                    .AddYamlFile($"appsettings.{env.EnvironmentName}.yaml",
+                                  optional: true, reloadOnChange: true)
+                    .AddYamlFile("secrets.yaml", optional: true);
 
-                config.AddEnvironmentVariables();
+              // config.AddJsonFile("MyConfig.json", optional: true, reloadOnChange: true)
+              //       .AddJsonFile($"MyConfig.{env.EnvironmentName}.json",
+              //                      optional: true, reloadOnChange: true);
 
-                if (args != null)
-                {
-                    config.AddCommandLine(args);
-                }
+              config.AddEnvironmentVariables();
+
+              if (args != null)
+              {
+                config.AddCommandLine(args);
+              }
             })
             .ConfigureWebHostDefaults(webBuilder =>
             {
