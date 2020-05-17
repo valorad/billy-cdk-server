@@ -30,7 +30,7 @@ namespace App
 
             // add secrets
             services.Configure<ProjectSettings>(
-              Configuration.GetSection("BillyCDK")
+              Configuration.GetSection("mongo")
             );
             
             services.AddSingleton<IProjectSettings>(sp =>

@@ -351,5 +351,8 @@ MigrationBackup/
 
 # Site specific
 .vscode/**
+
+secrets.yaml
+
 !.vscode/launch.json
 !.vscode/tasks.json
