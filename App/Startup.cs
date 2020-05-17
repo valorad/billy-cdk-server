@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using App.Models;
+using App.Database;
+using App.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,13 +30,20 @@ namespace App
         {
 
             // add secrets
-            services.Configure<ProjectSettings>(
+            services.Configure<IDBConfig>(
               Configuration.GetSection("mongo")
             );
             
-            services.AddSingleton<IProjectSettings>(sp =>
-              sp.GetRequiredService<IOptions<ProjectSettings>>().Value
+            services.AddSingleton<IDBConfig>(sp =>
+              sp.GetRequiredService<IOptions<DBConfig>>().Value
             );
+
+            // config db
+            services.AddTransient<IDBContext, DBAccess>();
+
+            // add endpoints
+            services.AddSingleton<IPlayerService, PlayerService>();
+
 
             services.AddControllers();
         }
