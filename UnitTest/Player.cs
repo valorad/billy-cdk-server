@@ -4,57 +4,12 @@ using System.Reflection;
 using App.Database;
 using App.Models;
 using App.Services;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Xunit;
 using Xunit.Sdk;
 
 namespace UnitTest
 {
-
-  public class DbFixture
-  {
-    public DbFixture()
-    {
-      var config = new ConfigurationBuilder()
-          .AddYamlFile("secrets.yaml")
-          .AddEnvironmentVariables()
-          .Build();
-
-      var services = new ServiceCollection();
-      // serviceCollection
-      //     .AddDbContext<SomeContext>(options => options.UseSqlServer("connection string"),
-      //         ServiceLifetime.Transient);
-
-      var d = config.GetSection("mongo");
-      var c = d.GetSection("host");
-
-      // add secrets
-      services.Configure<DBConfig>(
-        config.GetSection("mongo")
-      );
-
-      services.AddSingleton<IDBConfig>(sp =>
-        sp.GetRequiredService<IOptions<DBConfig>>().Value
-      );
-
-      // config db
-      services.AddTransient<IDBContext, DBAccess>();
-
-      // add endpoints
-      services.AddSingleton<IPlayerService, PlayerService>();
-
-      ServiceProvider = services.BuildServiceProvider();
-    }
-
-    public ServiceProvider ServiceProvider { get; private set; }
-
-    // public void Dispose()
-    // {
-    //   throw new NotImplementedException();
-    // }
-  }
 
 
   // [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
@@ -78,22 +33,20 @@ namespace UnitTest
   public class PlayerTest : IClassFixture<DbFixture>, IDisposable
   {
 
-    private readonly ServiceProvider _serviceProvider;
+    private readonly ServiceProvider serviceProvider;
     private readonly IPlayerService playerService;
-    private readonly IDBContext context;
+    private readonly IDBContext dbContext;
 
-    public PlayerTest(
-      DbFixture fixture
-    )
+    public PlayerTest(DbFixture fixture)
     {
-      _serviceProvider = fixture.ServiceProvider;
-      playerService = _serviceProvider.GetService<IPlayerService>();
-      context = _serviceProvider.GetService<IDBContext>();
+      serviceProvider = fixture.ServiceProvider;
+      playerService = serviceProvider.GetService<IPlayerService>();
+      dbContext = serviceProvider.GetService<IDBContext>();
     }
 
     public void Dispose()
     {
-      context.Drop();
+      dbContext.Drop();
     }
 
     [Theory(DisplayName = "Add + Get a player")]

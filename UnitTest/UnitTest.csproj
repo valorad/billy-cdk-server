@@ -18,4 +18,10 @@
     <ProjectReference Include="..\App\App.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="secrets.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
