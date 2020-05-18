@@ -41,7 +41,7 @@ namespace App.Database
     //   return client.GetDatabase(settings.DB.Data);
     // }
 
-    private bool Drop() {
+    public bool Drop() {
       try
       {
         this.client.DropDatabase(settings.DataDB);

@@ -13,7 +13,7 @@ using Xunit.Sdk;
 namespace UnitTest
 {
 
-  public class DbFixture : IDisposable
+  public class DbFixture
   {
     public DbFixture()
     {
@@ -50,10 +50,10 @@ namespace UnitTest
 
     public ServiceProvider ServiceProvider { get; private set; }
 
-    public void Dispose()
-    {
-      throw new NotImplementedException();
-    }
+    // public void Dispose()
+    // {
+    //   throw new NotImplementedException();
+    // }
   }
 
 
@@ -80,6 +80,7 @@ namespace UnitTest
 
     private readonly ServiceProvider _serviceProvider;
     private readonly IPlayerService playerService;
+    private readonly IDBContext context;
 
     public PlayerTest(
       DbFixture fixture
@@ -87,11 +88,12 @@ namespace UnitTest
     {
       _serviceProvider = fixture.ServiceProvider;
       playerService = _serviceProvider.GetService<IPlayerService>();
+      context = _serviceProvider.GetService<IDBContext>();
     }
 
     public void Dispose()
     {
-      throw new NotImplementedException();
+      context.Drop();
     }
 
     [Theory(DisplayName = "Add + Get a player")]
