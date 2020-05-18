@@ -39,9 +39,19 @@ namespace App.Services
       return message;
     }
 
+    public Task<CUDMessage> AddPlayers(List<IPlayer> newPlayers)
+    {
+      throw new NotImplementedException();
+    }
+
     public Task<CUDMessage> DeletePlayer(string dbname)
     {
       throw new System.NotImplementedException();
+    }
+
+    public Task<CUDMessage> DeletePlayers(JsonElement condition)
+    {
+      throw new NotImplementedException();
     }
 
     public async Task<Player> GetPlayer(string dbname)
@@ -49,15 +59,25 @@ namespace App.Services
       return await context.Players.Find(p => p.DBName == dbname).FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Player>> GetPlayerList(JsonElement condition)
+    public Task<Player> GetPlayer(string dbname, IViewOption options)
+    {
+      throw new NotImplementedException();
+    }
+
+    public async Task<List<Player>> GetPlayerList(JsonElement condition)
     {
             FilterDefinition<Player> filter = condition.ToString();
             return await context.Players.Find(filter).ToListAsync();
     }
 
-    public Task<IEnumerable<Player>> GetPlayerList(JsonElement condition, View options)
+    public Task<List<Player>> GetPlayerList(JsonElement condition, IViewOption options)
     {
       throw new System.NotImplementedException();
+    }
+
+    public Task<CUDMessage> UpdatePlayer(string uniqueField, JsonElement token)
+    {
+      throw new NotImplementedException();
     }
 
     public Task<CUDMessage> UpdatePlayers(JsonElement condition, JsonElement token)

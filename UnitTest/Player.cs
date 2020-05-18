@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text.Json;
 using App.Database;
 using App.Models;
 using App.Services;
@@ -11,25 +12,7 @@ using Xunit.Sdk;
 namespace UnitTest
 {
 
-
-  // [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-  // public class TestBeforeAfter : BeforeAfterTestAttribute
-  // {
-  //   public override void Before(MethodInfo methodUnderTest)
-  //   {
-  //     // Debug.WriteLine(methodUnderTest.Name);
-
-  //   }
-
-  //   public override void After(MethodInfo methodUnderTest)
-  //   {
-
-  //     // Debug.WriteLine(methodUnderTest.Name);
-  //   }
-  // }
-
-
-  // [TestBeforeAfter]
+  [Collection("Sequential")]
   public class PlayerTest : IClassFixture<DbFixture>, IDisposable
   {
 
@@ -46,23 +29,58 @@ namespace UnitTest
 
     public void Dispose()
     {
+      // called after each test method
       dbContext.Drop();
     }
 
-    [Theory(DisplayName = "Add + Get a player")]
-    [ClassData(typeof(AddPlayerData))]
-    public async void TestAdd(IPlayer newPlayer)
+    [Theory(DisplayName = "Player singular test")]
+    [ClassData(typeof(TestSingleData))]
+    public async void TestCRUDSingle(IPlayer newPlayer, JsonElement updateToken)
     {
+
+      // Add single
       CUDMessage addMessage = await playerService.AddPlayer(newPlayer);
       Assert.True(addMessage.OK);
       IPlayer playerInDB = await playerService.GetPlayer(newPlayer.DBName);
       Assert.NotNull(playerInDB);
+      // update single
+      CUDMessage updateMessage = await playerService.UpdatePlayer(newPlayer.DBName, updateToken);
+      playerInDB = await playerService.GetPlayer(newPlayer.DBName);
+      Assert.Equal("game-tesV", playerInDB.CDKeys[0]);
+      // delete single
+      CUDMessage deleteMessage = await playerService.DeletePlayer(newPlayer.DBName);
+      Assert.True(deleteMessage.OK);
+      playerInDB = await playerService.GetPlayer(newPlayer.DBName);
+      Assert.Null(playerInDB);
     }
+
+    [Theory(DisplayName = "Player plural test")]
+    [ClassData(typeof(TestListData))]
+    public async void TestCRUDList(List<IPlayer> newPlayers, JsonElement updateCondition, JsonElement updateToken)
+    {
+
+      // Add many
+      CUDMessage addMessage = await playerService.AddPlayers(newPlayers);
+      Assert.True(addMessage.OK);
+      List<Player> playersInDB = await playerService.GetPlayerList(JsonDocument.Parse("{}").RootElement);
+      Assert.True(playersInDB.Count == 3);
+      // update many
+      CUDMessage updateMessage = await playerService.UpdatePlayers(updateCondition, updateToken);
+      playersInDB = await playerService.GetPlayerList(JsonDocument.Parse("{}").RootElement);
+      Assert.Equal(2, updateMessage.NumAffected);
+      Assert.Equal(2, playersInDB[2].CDKeys.Count);
+      // delete many
+      CUDMessage deleteMessage = await playerService.DeletePlayers(updateCondition);
+      Assert.True(deleteMessage.NumAffected == 2);
+      playersInDB = await playerService.GetPlayerList(JsonDocument.Parse("{}").RootElement);
+      Assert.True(playersInDB.Count == 1);
+    }
+
   }
 
-  public class AddPlayerData : TheoryData<IPlayer>
+  public class TestSingleData : TheoryData<IPlayer, JsonElement>
   {
-    public AddPlayerData()
+    public TestSingleData()
     {
       Add(
         new Player()
@@ -71,8 +89,41 @@ namespace UnitTest
           IsPremium = false,
           CDKeys = new List<string>() { },
           Games = new List<string>() { },
-        }
+        },
+        JsonDocument.Parse("{\"games\": [\"game-tesV\"]}").RootElement
       );
     }
   }
+
+  public class TestListData : TheoryData<List<IPlayer>, JsonElement, JsonElement>
+  {
+    public TestListData()
+    {
+      Add(
+        new List<IPlayer>() {
+          new Player() {
+            DBName = "player-one",
+            IsPremium = false,
+            CDKeys = new List<string>() { },
+            Games = new List<string>() { },
+          },
+          new Player() {
+            DBName = "player-squrriel",
+            IsPremium = true,
+            CDKeys = new List<string>() { },
+            Games = new List<string>() { },
+          },
+          new Player() {
+            DBName = "player-pcmasterrace",
+            IsPremium = true,
+            CDKeys = new List<string>() { },
+            Games = new List<string>() { },
+          }
+        },
+        JsonDocument.Parse("{\"IsPremium\": true}").RootElement,
+        JsonDocument.Parse("{\"cdKeys\": [\"6aff50mongoObjectIDcreative\", \"6aff51mongoObjectIDimo\"]}").RootElement
+      );
+    }
+  }
+
 }
