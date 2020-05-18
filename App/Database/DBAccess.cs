@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using App.Models;
 using MongoDB.Driver;
 
 namespace App.Database
@@ -7,20 +8,21 @@ namespace App.Database
   public class DBAccess : IDBContext
   {
     private readonly IDBConfig settings;
+    private readonly MongoClient client;
     private readonly IMongoDatabase dbInstance;
 
-    private readonly string uri;
+    // private readonly string uri;
 
     public DBAccess(IDBConfig settings)
     {
       this.settings = settings;
 
-      uri = @$"
+      string uri = @$"
         mongodb://{ settings.User }
         :{ settings.Password }
         @{ settings.Host }
-        /{ settings.DB.Data }
-        ?authSource={ settings.DB.Auth }
+        /{ settings.DataDB }
+        ?authSource={ settings.AuthDB }
       ";
 
       // remove all white spaces
@@ -28,13 +30,29 @@ namespace App.Database
 
       Console.WriteLine($"uri: {uri}");
 
-      dbInstance = Connect();
+      client = new MongoClient(uri);
+
+      dbInstance = client.GetDatabase(settings.DataDB);
     }
 
-    private IMongoDatabase Connect()
-    {
-      var client = new MongoClient(uri);
-      return client.GetDatabase(settings.DB.Data);
+    // private IMongoDatabase Connect()
+    // {
+    //   client = new MongoClient(uri);
+    //   return client.GetDatabase(settings.DB.Data);
+    // }
+
+    private bool Drop() {
+      try
+      {
+        this.client.DropDatabase(settings.DataDB);
+        return true;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e.ToString());
+        return false;
+      }
+      
     }
 
     public IMongoCollection<Player> Players => dbInstance.GetCollection<Player>("players");

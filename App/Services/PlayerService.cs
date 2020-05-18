@@ -49,9 +49,10 @@ namespace App.Services
       return await context.Players.Find(p => p.DBName == dbname).FirstOrDefaultAsync();
     }
 
-    public Task<IEnumerable<Player>> GetPlayerList(JsonElement condition)
+    public async Task<IEnumerable<Player>> GetPlayerList(JsonElement condition)
     {
-      throw new System.NotImplementedException();
+            FilterDefinition<Player> filter = condition.ToString();
+            return await context.Players.Find(filter).ToListAsync();
     }
 
     public Task<IEnumerable<Player>> GetPlayerList(JsonElement condition, View options)

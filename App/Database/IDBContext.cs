@@ -1,3 +1,4 @@
+using App.Models;
 using MongoDB.Driver;
 
 namespace App.Database

@@ -30,10 +30,14 @@ namespace App
         {
 
             // add secrets
-            services.Configure<IDBConfig>(
+            services.Configure<DBConfig>(
               Configuration.GetSection("mongo")
             );
             
+            // services.AddSingleton<IDBConfig>(sp =>
+            //   sp.GetRequiredService<IOptions<DBConfig>>().Value
+            // );
+
             services.AddSingleton<IDBConfig>(sp =>
               sp.GetRequiredService<IOptions<DBConfig>>().Value
             );

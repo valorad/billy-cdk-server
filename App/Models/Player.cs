@@ -3,7 +3,7 @@ using App.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace App.Database
+namespace App.Models
 {
   public class Player : IPlayer
   {
