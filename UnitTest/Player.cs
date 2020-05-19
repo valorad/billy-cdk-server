@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text.Json;
 using App.Database;
 using App.Models;
 using App.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using Xunit.Sdk;
 
 namespace UnitTest
 {
@@ -46,7 +44,7 @@ namespace UnitTest
       // update single
       CUDMessage updateMessage = await playerService.UpdatePlayer(newPlayer.DBName, updateToken);
       playerInDB = await playerService.GetPlayer(newPlayer.DBName);
-      Assert.Equal("game-tesV", playerInDB.CDKeys[0]);
+      Assert.Equal("game-tesV", playerInDB.Games[0]);
       // delete single
       CUDMessage deleteMessage = await playerService.DeletePlayer(newPlayer.DBName);
       Assert.True(deleteMessage.OK);
@@ -66,8 +64,8 @@ namespace UnitTest
       Assert.True(playersInDB.Count == 3);
       // update many
       CUDMessage updateMessage = await playerService.UpdatePlayers(updateCondition, updateToken);
-      playersInDB = await playerService.GetPlayerList(JsonDocument.Parse("{}").RootElement);
       Assert.Equal(2, updateMessage.NumAffected);
+      playersInDB = await playerService.GetPlayerList(JsonDocument.Parse("{}").RootElement);
       Assert.Equal(2, playersInDB[2].CDKeys.Count);
       // delete many
       CUDMessage deleteMessage = await playerService.DeletePlayers(updateCondition);
@@ -90,7 +88,7 @@ namespace UnitTest
           CDKeys = new List<string>() { },
           Games = new List<string>() { },
         },
-        JsonDocument.Parse("{\"games\": [\"game-tesV\"]}").RootElement
+        JsonDocument.Parse("{  \"$set\": {    \"games\": [\"game-tesV\"]  }}").RootElement
       );
     }
   }
@@ -99,6 +97,7 @@ namespace UnitTest
   {
     public TestListData()
     {
+
       Add(
         new List<IPlayer>() {
           new Player() {
@@ -120,8 +119,8 @@ namespace UnitTest
             Games = new List<string>() { },
           }
         },
-        JsonDocument.Parse("{\"IsPremium\": true}").RootElement,
-        JsonDocument.Parse("{\"cdKeys\": [\"6aff50mongoObjectIDcreative\", \"6aff51mongoObjectIDimo\"]}").RootElement
+        JsonDocument.Parse("{\"isPremium\": true}").RootElement,
+        JsonDocument.Parse("{  \"$set\": {    \"cdKeys\": [      \"6aff50mongoObjectIDcreative\",      \"6aff51mongoObjectIDimo\"    ]  }}").RootElement
       );
     }
   }

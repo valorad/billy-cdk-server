@@ -39,19 +39,86 @@ namespace App.Services
       return message;
     }
 
-    public Task<CUDMessage> AddPlayers(List<IPlayer> newPlayers)
+    public async Task<CUDMessage> AddPlayers(List<IPlayer> newPlayers)
     {
-      throw new NotImplementedException();
+      // Lists cannot simply convert via "as".
+      List<Player> newPlayersToAdd = newPlayers.ConvertAll(ele => ele as Player);
+      try
+      {
+        await context.Players.InsertManyAsync(newPlayersToAdd);
+        // IEnumerable<Player> newPlayersToAdd = newPlayers.AsEnumerable() as IEnumerable<Player>;
+
+        // var d = Ensure.IsNotNull<IEnumerable<Player>>(newPlayersToAdd, nameof(newPlayersToAdd));
+        // Ensure.IsNotNull<IEnumerable<Player>>(newPlayers, nameof(newPlayers));
+        return new CUDMessage()
+        {
+          OK = true,
+          NumAffected = newPlayers.Count,
+          Message = "",
+        };
+      }
+      catch (Exception e)
+      {
+        return new CUDMessage()
+        {
+          OK = false,
+          NumAffected = 0,
+          Message = e.ToString(),
+        };
+      }
     }
 
-    public Task<CUDMessage> DeletePlayer(string dbname)
+    public async Task<CUDMessage> DeletePlayer(string dbname)
     {
-      throw new System.NotImplementedException();
+
+      try
+      {
+        DeleteResult result = await context.Players.DeleteOneAsync(p => p.DBName == dbname);
+        long numDeleted = result.DeletedCount;
+        return new CUDMessage()
+        {
+          OK = true,
+          NumAffected = numDeleted,
+          Message = "",
+        };
+      }
+      catch (Exception e)
+      {
+        return new CUDMessage()
+        {
+          OK = false,
+          NumAffected = 0,
+          Message = e.ToString(),
+        };
+      }
+
     }
 
-    public Task<CUDMessage> DeletePlayers(JsonElement condition)
+    public async Task<CUDMessage> DeletePlayers(JsonElement condition)
     {
-      throw new NotImplementedException();
+
+      FilterDefinition<Player> filter = condition.ToString();
+
+      try
+      {
+        DeleteResult result = await context.Players.DeleteManyAsync(filter);
+        long numDeleted = result.DeletedCount;
+        return new CUDMessage()
+        {
+          OK = true,
+          NumAffected = numDeleted,
+          Message = "",
+        };
+      }
+      catch (Exception e)
+      {
+        return new CUDMessage()
+        {
+          OK = false,
+          NumAffected = 0,
+          Message = e.ToString(),
+        };
+      }
     }
 
     public async Task<Player> GetPlayer(string dbname)
@@ -59,30 +126,96 @@ namespace App.Services
       return await context.Players.Find(p => p.DBName == dbname).FirstOrDefaultAsync();
     }
 
-    public Task<Player> GetPlayer(string dbname, IViewOption options)
+    public async Task<Player> GetPlayer(string uniqueField, IViewOption options)
     {
-      throw new NotImplementedException();
+
+      string uniqueFieldName = "dbname";
+      FilterDefinition<Player> condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
+
+      var query = context.Players.Find(condition);
+
+      query = View.MakePagination(query, options);
+
+      query = query.Project<Player>(View.BuildProjection<Player>(options));
+
+      query.Sort(View.BuildSort(options));
+
+      return await query.FirstOrDefaultAsync();
+
     }
 
     public async Task<List<Player>> GetPlayerList(JsonElement condition)
     {
-            FilterDefinition<Player> filter = condition.ToString();
-            return await context.Players.Find(filter).ToListAsync();
+      FilterDefinition<Player> filter = condition.ToString();
+      return await context.Players.Find(filter).ToListAsync();
     }
 
-    public Task<List<Player>> GetPlayerList(JsonElement condition, IViewOption options)
+    public async Task<List<Player>> GetPlayerList(JsonElement condition, IViewOption options)
     {
-      throw new System.NotImplementedException();
+      FilterDefinition<Player> filter = condition.ToString();
+
+      var query = context.Players.Find(filter);
+
+      query = View.MakePagination(query, options);
+
+      query = query.Project<Player>(View.BuildProjection<Player>(options));
+
+      query.Sort(View.BuildSort(options));
+
+      return await query.ToListAsync();
+
     }
 
-    public Task<CUDMessage> UpdatePlayer(string uniqueField, JsonElement token)
+    public async Task<CUDMessage> UpdatePlayer(string uniqueField, JsonElement token)
     {
-      throw new NotImplementedException();
+      string uniqueFieldName = "dbname";
+      FilterDefinition<Player> condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
+      UpdateDefinition<Player> updateToken = token.ToString();
+      try
+      {
+        UpdateResult result = await context.Players.UpdateOneAsync(condition, updateToken);
+        long numUpdated = result.ModifiedCount;
+        return new CUDMessage()
+        {
+          NumAffected = numUpdated,
+          OK = true,
+        };
+      }
+      catch (Exception e)
+      {
+        return new CUDMessage()
+        {
+          Message = e.ToString(),
+          NumAffected = 0,
+          OK = false,
+        };
+      }
     }
 
-    public Task<CUDMessage> UpdatePlayers(JsonElement condition, JsonElement token)
+    public async Task<CUDMessage> UpdatePlayers(JsonElement condition, JsonElement token)
     {
-      throw new System.NotImplementedException();
+      FilterDefinition<Player> filter = condition.ToString();
+      UpdateDefinition<Player> updateToken = token.ToString();
+      try
+      {
+        UpdateResult result = await context.Players.UpdateManyAsync(filter, updateToken);
+        long numUpdated = result.ModifiedCount;
+        return new CUDMessage()
+        {
+          NumAffected = numUpdated,
+          OK = true,
+        };
+      }
+      catch (Exception e)
+      {
+        return new CUDMessage()
+        {
+          Message = e.ToString(),
+          NumAffected = 0,
+          OK = false,
+        };
+      }
     }
+
   }
 }

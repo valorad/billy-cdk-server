@@ -37,9 +37,5 @@ namespace UnitTest
 
     public ServiceProvider ServiceProvider { get; private set; }
 
-    // public void Dispose()
-    // {
-    //   throw new NotImplementedException();
-    // }
   }
 }

@@ -11,8 +11,6 @@ namespace App.Database
     private readonly MongoClient client;
     private readonly IMongoDatabase dbInstance;
 
-    // private readonly string uri;
-
     public DBAccess(IDBConfig settings)
     {
       this.settings = settings;
@@ -28,18 +26,10 @@ namespace App.Database
       // remove all white spaces
       uri = Regex.Replace(uri, @"\s+", "");
 
-      Console.WriteLine($"uri: {uri}");
-
       client = new MongoClient(uri);
 
       dbInstance = client.GetDatabase(settings.DataDB);
     }
-
-    // private IMongoDatabase Connect()
-    // {
-    //   client = new MongoClient(uri);
-    //   return client.GetDatabase(settings.DB.Data);
-    // }
 
     public bool Drop() {
       try
