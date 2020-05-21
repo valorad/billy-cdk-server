@@ -33,50 +33,51 @@ namespace UnitTest
 
     [Theory(DisplayName = "Player singular test")]
     [ClassData(typeof(TestSingleData))]
-    public async void TestCRUDSingle(IPlayer newPlayer, JsonElement updateToken)
+    public async void TestCRUDSingle(Player newPlayer, JsonElement updateToken)
     {
 
       // Add single
-      CUDMessage addMessage = await playerService.AddPlayer(newPlayer);
+      CUDMessage addMessage = await playerService.AddSingle(newPlayer);
       Assert.True(addMessage.OK);
-      IPlayer playerInDB = await playerService.GetPlayer(newPlayer.DBName);
+      IPlayer playerInDB = await playerService.GetSingle(newPlayer.DBName);
       Assert.NotNull(playerInDB);
       // update single
-      CUDMessage updateMessage = await playerService.UpdatePlayer(newPlayer.DBName, updateToken);
-      playerInDB = await playerService.GetPlayer(newPlayer.DBName);
+      CUDMessage updateMessage = await playerService.UpdateSingle(newPlayer.DBName, updateToken);
+      playerInDB = await playerService.GetSingle(newPlayer.DBName);
       Assert.Equal("game-tesV", playerInDB.Games[0]);
       // delete single
-      CUDMessage deleteMessage = await playerService.DeletePlayer(newPlayer.DBName);
+      CUDMessage deleteMessage = await playerService.DeleteSingle(newPlayer.DBName);
       Assert.True(deleteMessage.OK);
-      playerInDB = await playerService.GetPlayer(newPlayer.DBName);
+      playerInDB = await playerService.GetSingle(newPlayer.DBName);
       Assert.Null(playerInDB);
+
     }
 
     [Theory(DisplayName = "Player plural test")]
     [ClassData(typeof(TestListData))]
-    public async void TestCRUDList(List<IPlayer> newPlayers, JsonElement updateCondition, JsonElement updateToken)
+    public async void TestCRUDList(List<Player> newPlayers, JsonElement updateCondition, JsonElement updateToken)
     {
 
       // Add many
-      CUDMessage addMessage = await playerService.AddPlayers(newPlayers);
+      CUDMessage addMessage = await playerService.AddList(newPlayers);
       Assert.True(addMessage.OK);
-      List<Player> playersInDB = await playerService.GetPlayerList(JsonDocument.Parse("{}").RootElement);
+      List<Player> playersInDB = await playerService.GetList(JsonDocument.Parse("{}").RootElement);
       Assert.True(playersInDB.Count == 3);
       // update many
-      CUDMessage updateMessage = await playerService.UpdatePlayers(updateCondition, updateToken);
+      CUDMessage updateMessage = await playerService.UpdateList(updateCondition, updateToken);
       Assert.Equal(2, updateMessage.NumAffected);
-      playersInDB = await playerService.GetPlayerList(JsonDocument.Parse("{}").RootElement);
+      playersInDB = await playerService.GetList(JsonDocument.Parse("{}").RootElement);
       Assert.Equal(2, playersInDB[2].CDKeys.Count);
       // delete many
-      CUDMessage deleteMessage = await playerService.DeletePlayers(updateCondition);
+      CUDMessage deleteMessage = await playerService.DeleteList(updateCondition);
       Assert.True(deleteMessage.NumAffected == 2);
-      playersInDB = await playerService.GetPlayerList(JsonDocument.Parse("{}").RootElement);
+      playersInDB = await playerService.GetList(JsonDocument.Parse("{}").RootElement);
       Assert.True(playersInDB.Count == 1);
     }
 
   }
 
-  public class TestSingleData : TheoryData<IPlayer, JsonElement>
+  public class TestSingleData : TheoryData<Player, JsonElement>
   {
     public TestSingleData()
     {
@@ -93,13 +94,13 @@ namespace UnitTest
     }
   }
 
-  public class TestListData : TheoryData<List<IPlayer>, JsonElement, JsonElement>
+  public class TestListData : TheoryData<List<Player>, JsonElement, JsonElement>
   {
     public TestListData()
     {
 
       Add(
-        new List<IPlayer>() {
+        new List<Player>() {
           new Player() {
             DBName = "player-one",
             IsPremium = false,
@@ -119,6 +120,7 @@ namespace UnitTest
             Games = new List<string>() { },
           }
         },
+
         JsonDocument.Parse("{\"isPremium\": true}").RootElement,
         JsonDocument.Parse("{  \"$set\": {    \"cdKeys\": [      \"6aff50mongoObjectIDcreative\",      \"6aff51mongoObjectIDimo\"    ]  }}").RootElement
       );

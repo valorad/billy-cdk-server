@@ -45,6 +45,9 @@ namespace App.Database
       
     }
 
-    public IMongoCollection<Player> Players => dbInstance.GetCollection<Player>("players");
+    public IMongoDatabase GetDatabase() {
+      return dbInstance;
+    }
+
   }
 }

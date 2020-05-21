@@ -10,10 +10,4 @@ namespace App.Database
 
   }
 
-  // public class DBLocation : IDBLocation
-  // {
-    // public string data { get; set; }
-    // public string auth { get; set; }
-  // }
-
 }

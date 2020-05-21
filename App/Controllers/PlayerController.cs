@@ -23,7 +23,7 @@ namespace App.Controllers
         [HttpGet("all")]
         public async Task<IEnumerable<Player>> GetAll()
         {
-            IEnumerable<Player> result = await playerService.GetPlayerList(JsonDocument.Parse("{}").RootElement);
+            IEnumerable<Player> result = await playerService.GetList(JsonDocument.Parse("{}").RootElement);
             return result;
         }
     }

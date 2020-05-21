@@ -44,10 +44,10 @@ namespace App
 
             // config db
             services.AddTransient<IDBContext, DBAccess>();
+            services.AddTransient<IDBCollection, DBCollection>();
 
             // add endpoints
             services.AddSingleton<IPlayerService, PlayerService>();
-
 
             services.AddControllers();
         }

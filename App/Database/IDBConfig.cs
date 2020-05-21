@@ -9,12 +9,12 @@ namespace App.Database
 
   public interface IDBConfig
   {
-    public string User { get; set; }
-    public string Password { get; set; }
+    string User { get; set; }
+    string Password { get; set; }
 
-    public string Host { get; set; }
-    public string DataDB { get; set; }
-    public string AuthDB { get; set; }
+    string Host { get; set; }
+    string DataDB { get; set; }
+    string AuthDB { get; set; }
 
   }
 }
