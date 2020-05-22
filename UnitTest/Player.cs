@@ -67,7 +67,7 @@ namespace UnitTest
       CUDMessage updateMessage = await playerService.UpdateList(updateCondition, updateToken);
       Assert.Equal(2, updateMessage.NumAffected);
       playersInDB = await playerService.GetList(JsonDocument.Parse("{}").RootElement);
-      Assert.Equal(2, playersInDB[2].CDKeys.Count);
+      Assert.Equal(2, playersInDB[2].Games.Count);
       // delete many
       CUDMessage deleteMessage = await playerService.DeleteList(updateCondition);
       Assert.True(deleteMessage.NumAffected == 2);
@@ -86,7 +86,6 @@ namespace UnitTest
         {
           DBName = "player-one",
           IsPremium = false,
-          CDKeys = new List<string>() { },
           Games = new List<string>() { },
         },
         JsonDocument.Parse("{  \"$set\": {    \"games\": [\"game-tesV\"]  }}").RootElement
@@ -104,25 +103,22 @@ namespace UnitTest
           new Player() {
             DBName = "player-one",
             IsPremium = false,
-            CDKeys = new List<string>() { },
             Games = new List<string>() { },
           },
           new Player() {
             DBName = "player-squrriel",
             IsPremium = true,
-            CDKeys = new List<string>() { },
             Games = new List<string>() { },
           },
           new Player() {
             DBName = "player-pcmasterrace",
             IsPremium = true,
-            CDKeys = new List<string>() { },
             Games = new List<string>() { },
           }
         },
 
         JsonDocument.Parse("{\"isPremium\": true}").RootElement,
-        JsonDocument.Parse("{  \"$set\": {    \"cdKeys\": [      \"6aff50mongoObjectIDcreative\",      \"6aff51mongoObjectIDimo\"    ]  }}").RootElement
+        JsonDocument.Parse("{  \"$set\": {    \"games\": [      \"game-terraria\",      \"game-kittyparty\"    ]  }}").RootElement
       );
     }
   }
