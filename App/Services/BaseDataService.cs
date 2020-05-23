@@ -19,13 +19,13 @@ namespace App.Services
         this.collection = collection;
     }
 
-    public async Task<T> GetSingle(string uniqueField)
+    public async Task<T> Get(string uniqueField)
     {
       FilterDefinition<T> condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
       return await collection.Find(condition).FirstOrDefaultAsync();
     }
 
-    public async Task<T> GetSingle(string uniqueField, IViewOption options)
+    public async Task<T> Get(string uniqueField, IViewOption options)
     {
 
       FilterDefinition<T> condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
@@ -41,13 +41,13 @@ namespace App.Services
       return await query.FirstOrDefaultAsync();
     }
 
-    public async Task<List<T>> GetList(JsonElement condition)
+    public async Task<List<T>> Get(JsonElement condition)
     {
       FilterDefinition<T> filter = condition.ToString();
       return await collection.Find(filter).ToListAsync();
     }
 
-    public async Task<List<T>> GetList(JsonElement condition, IViewOption options)
+    public async Task<List<T>> Get(JsonElement condition, IViewOption options)
     {
       FilterDefinition<T> filter = condition.ToString();
 
@@ -62,7 +62,7 @@ namespace App.Services
       return await query.ToListAsync();
     }
 
-    public async Task<CUDMessage> AddSingle(T newItem)
+    public async Task<CUDMessage> Add(T newItem)
     {
       var message = new CUDMessage()
       {
@@ -83,7 +83,7 @@ namespace App.Services
       return message;
     }
 
-    public async Task<CUDMessage> AddList(List<T> newItems)
+    public async Task<CUDMessage> Add(List<T> newItems)
     {
       try
       {
@@ -106,7 +106,7 @@ namespace App.Services
       }
     }
 
-    public async Task<CUDMessage> UpdateSingle(string uniqueField, JsonElement token)
+    public async Task<CUDMessage> Update(string uniqueField, JsonElement token)
     {
       FilterDefinition<T> condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
       UpdateDefinition<T> updateToken = token.ToString();
@@ -131,7 +131,7 @@ namespace App.Services
       }
     }
 
-    public async Task<CUDMessage> UpdateList(JsonElement condition, JsonElement token)
+    public async Task<CUDMessage> Update(JsonElement condition, JsonElement token)
     {
       FilterDefinition<T> filter = condition.ToString();
       UpdateDefinition<T> updateToken = token.ToString();
@@ -156,7 +156,7 @@ namespace App.Services
       }
     }
 
-    public async Task<CUDMessage> DeleteSingle(string uniqueField)
+    public async Task<CUDMessage> Delete(string uniqueField)
     {
       FilterDefinition<T> condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
 
@@ -182,7 +182,7 @@ namespace App.Services
       }
     }
 
-    public async Task<CUDMessage> DeleteList(JsonElement condition)
+    public async Task<CUDMessage> Delete(JsonElement condition)
     {
       FilterDefinition<T> filter = condition.ToString();
 

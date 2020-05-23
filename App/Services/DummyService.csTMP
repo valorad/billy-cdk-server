@@ -1,0 +1,13 @@
+using App.Database;
+using App.Models;
+
+namespace App.Services
+{
+  public class DummyService : BaseDataService<[TYPE]>, IDummyService
+  {
+    public DummyService(IDBCollection collection) : base([collection])
+    {
+      this.uniqueFieldName = "dbname";
+    }
+  }
+}

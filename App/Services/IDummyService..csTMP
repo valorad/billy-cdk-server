@@ -1,0 +1,9 @@
+using App.Models;
+
+namespace App.Services
+{
+  public interface IDummyService : IBaseDataService<[TYPE]>
+  {
+
+  }
+}

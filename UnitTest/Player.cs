@@ -37,18 +37,18 @@ namespace UnitTest
     {
 
       // Add single
-      CUDMessage addMessage = await playerService.AddSingle(newPlayer);
+      CUDMessage addMessage = await playerService.Add(newPlayer);
       Assert.True(addMessage.OK);
-      IPlayer playerInDB = await playerService.GetSingle(newPlayer.DBName);
+      IPlayer playerInDB = await playerService.Get(newPlayer.DBName);
       Assert.NotNull(playerInDB);
       // update single
-      CUDMessage updateMessage = await playerService.UpdateSingle(newPlayer.DBName, updateToken);
-      playerInDB = await playerService.GetSingle(newPlayer.DBName);
+      CUDMessage updateMessage = await playerService.Update(newPlayer.DBName, updateToken);
+      playerInDB = await playerService.Get(newPlayer.DBName);
       Assert.Equal("game-tesV", playerInDB.Games[0]);
       // delete single
-      CUDMessage deleteMessage = await playerService.DeleteSingle(newPlayer.DBName);
+      CUDMessage deleteMessage = await playerService.Delete(newPlayer.DBName);
       Assert.True(deleteMessage.OK);
-      playerInDB = await playerService.GetSingle(newPlayer.DBName);
+      playerInDB = await playerService.Get(newPlayer.DBName);
       Assert.Null(playerInDB);
 
     }
@@ -59,19 +59,19 @@ namespace UnitTest
     {
 
       // Add many
-      CUDMessage addMessage = await playerService.AddList(newPlayers);
+      CUDMessage addMessage = await playerService.Add(newPlayers);
       Assert.True(addMessage.OK);
-      List<Player> playersInDB = await playerService.GetList(JsonDocument.Parse("{}").RootElement);
+      List<Player> playersInDB = await playerService.Get(JsonDocument.Parse("{}").RootElement);
       Assert.True(playersInDB.Count == 3);
       // update many
-      CUDMessage updateMessage = await playerService.UpdateList(updateCondition, updateToken);
+      CUDMessage updateMessage = await playerService.Update(updateCondition, updateToken);
       Assert.Equal(2, updateMessage.NumAffected);
-      playersInDB = await playerService.GetList(JsonDocument.Parse("{}").RootElement);
+      playersInDB = await playerService.Get(JsonDocument.Parse("{}").RootElement);
       Assert.Equal(2, playersInDB[2].Games.Count);
       // delete many
-      CUDMessage deleteMessage = await playerService.DeleteList(updateCondition);
+      CUDMessage deleteMessage = await playerService.Delete(updateCondition);
       Assert.True(deleteMessage.NumAffected == 2);
-      playersInDB = await playerService.GetList(JsonDocument.Parse("{}").RootElement);
+      playersInDB = await playerService.Get(JsonDocument.Parse("{}").RootElement);
       Assert.True(playersInDB.Count == 1);
     }
 
@@ -81,7 +81,7 @@ namespace UnitTest
     {
 
       // Add a player
-      CUDMessage addMessage = await playerService.AddSingle(newPlayer);
+      CUDMessage addMessage = await playerService.Add(newPlayer);
       Assert.True(addMessage.OK);
 
       // Add a game
@@ -93,7 +93,7 @@ namespace UnitTest
       Assert.True(addGameMessage.OK);
 
       // Game item check
-      Player playerInDB = await playerService.GetSingle(newPlayer.DBName);
+      Player playerInDB = await playerService.Get(newPlayer.DBName);
       // Last game item should be the same as the last added game item in "moreGames"
       Assert.True(playerInDB.Games[moreGames.Count] == moreGames[moreGames.Count - 1]);
 

@@ -22,7 +22,7 @@ namespace App.Services
           + "}"
         + "}";
 
-      return await UpdateSingle(player, JsonDocument.Parse(updateToken).RootElement);
+      return await Update(player, JsonDocument.Parse(updateToken).RootElement);
     }
 
     public async Task<CUDMessage> AddGames(string player, List<string> games)
@@ -40,7 +40,7 @@ namespace App.Services
           + "}"
         + "}";
 
-      return await UpdateSingle(player, JsonDocument.Parse(updateToken).RootElement);
+      return await Update(player, JsonDocument.Parse(updateToken).RootElement);
     }
   }
 
