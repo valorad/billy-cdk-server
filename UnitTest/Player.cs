@@ -75,6 +75,30 @@ namespace UnitTest
       Assert.True(playersInDB.Count == 1);
     }
 
+    [Theory(DisplayName = "Player add game test")]
+    [ClassData(typeof(TestAddGameData))]
+    public async void TestAddGame(Player newPlayer, string aGame, List<string> moreGames)
+    {
+
+      // Add a player
+      CUDMessage addMessage = await playerService.AddSingle(newPlayer);
+      Assert.True(addMessage.OK);
+
+      // Add a game
+      CUDMessage addGameMessage = await playerService.AddGame(newPlayer.DBName, aGame);
+      Assert.True(addGameMessage.OK);
+
+      // Add more games
+      addGameMessage = await playerService.AddGames(newPlayer.DBName, moreGames);
+      Assert.True(addGameMessage.OK);
+
+      // Game item check
+      Player playerInDB = await playerService.GetSingle(newPlayer.DBName);
+      // Last game item should be the same as the last added game item in "moreGames"
+      Assert.True(playerInDB.Games[moreGames.Count] == moreGames[moreGames.Count - 1]);
+
+    }
+
   }
 
   public class TestSingleData : TheoryData<Player, JsonElement>
@@ -89,6 +113,23 @@ namespace UnitTest
           Games = new List<string>() { },
         },
         JsonDocument.Parse("{  \"$set\": {    \"games\": [\"game-tesV\"]  }}").RootElement
+      );
+    }
+  }
+
+  public class TestAddGameData : TheoryData<Player, string, List<string>>
+  {
+    public TestAddGameData()
+    {
+      Add(
+        new Player()
+        {
+          DBName = "player-one",
+          IsPremium = false,
+          Games = new List<string>() { },
+        },
+        "game-halo6",
+        new List<string> () {"game-cod16", "game-elderScrollBlades", "game-animalCrossing"}
       );
     }
   }
