@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -42,6 +43,22 @@ namespace App.Services
 
       return await Update(player, JsonDocument.Parse(updateToken).RootElement);
     }
+
+    public async Task<bool> OwnsTheGame(string playerName, string gameName)
+    {
+      Player player = await Get(playerName);
+
+      if (player is null) {
+        Console.WriteLine("Player does not exist");
+        return false;
+      }
+
+      return player.Games.Exists(ele => ele == gameName);
+
+    }
+
+
+
   }
 
 }
