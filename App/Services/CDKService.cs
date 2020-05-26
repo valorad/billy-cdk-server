@@ -14,7 +14,7 @@ namespace App.Services
       this.uniqueFieldName = "_id";
     }
 
-    public async Task<CUDMessage> Activate(string value)
+    public async Task<CDKey> Activate(string value)
     {
       string condition = "{"
         + $"\"value\": \"{value}\" "
@@ -29,7 +29,7 @@ namespace App.Services
       );
     }
 
-    public async Task<CUDMessage> Activate(List<string> value)
+    public async Task<List<CDKey>> Activate(List<string> value)
     {
       var valueQuoted = from ele in value select $"\"{ele}\"";
       string valueInText = string.Join(", ", valueQuoted);

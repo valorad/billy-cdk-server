@@ -33,10 +33,6 @@ namespace App
             services.Configure<DBConfig>(
               Configuration.GetSection("mongo")
             );
-            
-            // services.AddSingleton<IDBConfig>(sp =>
-            //   sp.GetRequiredService<IOptions<DBConfig>>().Value
-            // );
 
             services.AddSingleton<IDBConfig>(sp =>
               sp.GetRequiredService<IOptions<DBConfig>>().Value
@@ -48,6 +44,8 @@ namespace App
 
             // add endpoints
             services.AddSingleton<IPlayerService, PlayerService>();
+            services.AddSingleton<IGameService, GameService>();
+            services.AddSingleton<ICDKService, CDKService>();
 
             services.AddControllers();
         }
