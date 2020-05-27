@@ -32,7 +32,7 @@ namespace UnitTest
     }
 
     [Theory(DisplayName = "Player singular test")]
-    [ClassData(typeof(TestSingleData))]
+    [ClassData(typeof(DataSinglePlayer))]
     public async void TestCRUDSingle(Player newPlayer, JsonElement updateToken)
     {
 
@@ -54,7 +54,7 @@ namespace UnitTest
     }
 
     [Theory(DisplayName = "Player plural test")]
-    [ClassData(typeof(TestListData))]
+    [ClassData(typeof(DataMultiplePlayers))]
     public async void TestCRUDList(List<Player> newPlayers, JsonElement updateCondition, JsonElement updateToken)
     {
 
@@ -76,7 +76,7 @@ namespace UnitTest
     }
 
     [Theory(DisplayName = "Player add game test")]
-    [ClassData(typeof(TestAddGameData))]
+    [ClassData(typeof(DataPlayerAddGame))]
     public async void TestAddGame(Player newPlayer, string aGame, List<string> moreGames)
     {
 
@@ -89,7 +89,7 @@ namespace UnitTest
       Assert.True(addGameMessage.OK);
 
       // Add more games
-      addGameMessage = await playerService.AddGames(newPlayer.DBName, moreGames);
+      addGameMessage = await playerService.AddGame(newPlayer.DBName, moreGames);
       Assert.True(addGameMessage.OK);
 
       // Game item check
@@ -101,9 +101,9 @@ namespace UnitTest
 
   }
 
-  public class TestSingleData : TheoryData<Player, JsonElement>
+  public class DataSinglePlayer : TheoryData<Player, JsonElement>
   {
-    public TestSingleData()
+    public DataSinglePlayer()
     {
       Add(
         new Player()
@@ -117,9 +117,9 @@ namespace UnitTest
     }
   }
 
-  public class TestAddGameData : TheoryData<Player, string, List<string>>
+  public class DataPlayerAddGame : TheoryData<Player, string, List<string>>
   {
-    public TestAddGameData()
+    public DataPlayerAddGame()
     {
       Add(
         new Player()
@@ -134,9 +134,9 @@ namespace UnitTest
     }
   }
 
-  public class TestListData : TheoryData<List<Player>, JsonElement, JsonElement>
+  public class DataMultiplePlayers : TheoryData<List<Player>, JsonElement, JsonElement>
   {
-    public TestListData()
+    public DataMultiplePlayers()
     {
 
       Add(

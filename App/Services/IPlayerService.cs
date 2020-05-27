@@ -7,6 +7,6 @@ namespace App.Services
   public interface IPlayerService : IBaseDataService<Player>
   {
     Task<CUDMessage> AddGame(string player, string game);
-    Task<CUDMessage> AddGames(string player, List<string> games);
+    Task<CUDMessage> AddGame(string player, List<string> games);
   }
 }

@@ -26,7 +26,7 @@ namespace App.Services
       return await Update(player, JsonDocument.Parse(updateToken).RootElement);
     }
 
-    public async Task<CUDMessage> AddGames(string player, List<string> games)
+    public async Task<CUDMessage> AddGame(string player, List<string> games)
     {
 
       var gamesQuoted = from ele in games select $"\"{ele}\"";
