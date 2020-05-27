@@ -16,35 +16,37 @@ namespace App.Services
 
     public async Task<CDKey> Activate(string value)
     {
-      string condition = "{"
-        + $"\"value\": \"{value}\" "
-      + "}";
+      // string condition = "{"
+      //   + $"\"value\": \"{value}\" "
+      // + "}";
 
-      string updateToken = "{"
-        + "\"isActivated\": true "
-      + "}";
-      return await Update(
-        JsonDocument.Parse(condition).RootElement,
-        JsonDocument.Parse(updateToken).RootElement
-      );
+      // string updateToken = "{"
+      //   + "\"isActivated\": true "
+      // + "}";
+      // return await Update(
+      //   JsonDocument.Parse(condition).RootElement,
+      //   JsonDocument.Parse(updateToken).RootElement
+      // );
+      throw new System.NotImplementedException();
     }
 
     public async Task<List<CDKey>> Activate(List<string> value)
     {
-      var valueQuoted = from ele in value select $"\"{ele}\"";
-      string valueInText = string.Join(", ", valueQuoted);
-      string conditions = "{"
-      + " \"value\": " + "{"
-        + "\"$in\": [" + valueInText + "]"
-        + "}"
-      + "}";
-      string updateToken = "{"
-        + "\"isActivated\": true "
-      + "}";
-      return await Update(
-        JsonDocument.Parse(conditions).RootElement,
-        JsonDocument.Parse(updateToken).RootElement
-      );
+      // var valueQuoted = from ele in value select $"\"{ele}\"";
+      // string valueInText = string.Join(", ", valueQuoted);
+      // string conditions = "{"
+      // + " \"value\": " + "{"
+      //   + "\"$in\": [" + valueInText + "]"
+      //   + "}"
+      // + "}";
+      // string updateToken = "{"
+      //   + "\"isActivated\": true "
+      // + "}";
+      // return await Update(
+      //   JsonDocument.Parse(conditions).RootElement,
+      //   JsonDocument.Parse(updateToken).RootElement
+      // );
+      throw new System.NotImplementedException();
     }
 
     public async Task<CUDMessage> ActivateByDBID(string id)
