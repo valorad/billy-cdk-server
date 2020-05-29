@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using App.Database;
 using App.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace App.Services
@@ -21,7 +22,13 @@ namespace App.Services
 
     public async Task<T> Get(string uniqueField)
     {
-      FilterDefinition<T> condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
+      FilterDefinition<T> condition;
+      if (uniqueFieldName == "_id") {
+        condition = Builders<T>.Filter.Eq("_id", ObjectId.Parse(uniqueField));
+      } else {
+        condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
+      }
+
       return await collection.Find(condition).FirstOrDefaultAsync();
     }
 

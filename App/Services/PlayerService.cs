@@ -44,7 +44,7 @@ namespace App.Services
       return await Update(player, JsonDocument.Parse(updateToken).RootElement);
     }
 
-    public async Task<bool> OwnsTheGame(string playerName, string gameName)
+    public async Task<bool> DoesOwnTheGame(string playerName, string gameName)
     {
       Player player = await Get(playerName);
 
