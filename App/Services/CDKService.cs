@@ -93,13 +93,7 @@ namespace App.Services
     public async Task<List<CDKey>> Activate(string playerName, List<string> values)
     {
 
-      var validCDKeys = new List<CDKey>() {};
-      foreach (var value in values) {
-        CDKey validCDKey = await GetByValue(value);
-        if (validCDKey is {}) {
-          validCDKeys.Add(validCDKey);
-        }
-      }
+      List<CDKey> validCDKeys = await GetByValue(values);
 
       Player player = await playerService.Get(playerName);
 
