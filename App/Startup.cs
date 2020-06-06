@@ -2,8 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.Controllers.Graphs;
 using App.Database;
+using App.Models;
 using App.Services;
+using GraphQL.Server;
+using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -38,14 +42,50 @@ namespace App
               sp.GetRequiredService<IOptions<DBConfig>>().Value
             );
 
-            // config db
+            // configure db
             services.AddTransient<IDBContext, DBAccess>();
             services.AddTransient<IDBCollection, DBCollection>();
 
-            // add endpoints
+            // add services
             services.AddSingleton<IPlayerService, PlayerService>();
             services.AddSingleton<IGameService, GameService>();
             services.AddSingleton<ICDKService, CDKService>();
+
+            // add GraphQL
+            // services.AddSingleton<RootGraph>();
+            services.AddSingleton<Query>();
+            services.AddSingleton<ISchema>(provider => Schema.For(@"
+                type Player {
+                    _id: ID!
+                    dbname: String!
+                    isPremium: Boolean!
+                    games: [String]!
+                }
+
+                input PlayerView {
+                    dbname: String!
+                    isPremium: Boolean!
+                }
+
+                type Query {
+                    player(dbname: String!): Player
+                }
+            ", _ =>
+            {
+                _.Types.Include<Query>();
+                _.ServiceProvider = provider;
+            }));
+
+            services
+                .AddGraphQL((services, options) =>
+                {
+                    options.EnableMetrics = true;
+                    options.ExposeExceptions = true;
+                    var logger = services.GetRequiredService<ILogger<Startup>>();
+                    options.UnhandledExceptionDelegate = ctx => logger.LogError("{Error} occured", ctx.OriginalException.Message);
+                })
+            .AddSystemTextJson(deserializerSettings => { }, serializerSettings => { })
+            .AddDataLoader();            
 
             services.AddControllers();
         }
@@ -68,6 +108,9 @@ namespace App
             {
                 endpoints.MapControllers();
             });
+
+            // use graphQL
+            app.UseGraphQL<ISchema>("/gql");
         }
     }
 }
