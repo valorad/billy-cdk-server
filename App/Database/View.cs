@@ -1,29 +1,11 @@
 using System.Collections.Generic;
+using App.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace App.Database
 {
-  public interface IProjectionOption
-  {
-    List<string> Includes { get; set; }
-    List<string> Excludes { get; set; }
-  }
-
-  public interface IPaginationOption
-  {
-    int Page { get; set; }
-    int PerPage { get; set; }
-  }
-
-  public interface ISortOption
-  {
-    string OrderBy { get; set; }
-    string Order { get; set; }
-  }
-
-  public interface IViewOption : IProjectionOption, IPaginationOption, ISortOption { }
-
+  
   public static class View
   {
     public static IFindFluent<T, T> MakePagination<T>(IFindFluent<T, T> query, IPaginationOption options)

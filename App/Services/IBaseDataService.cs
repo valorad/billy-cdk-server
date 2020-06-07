@@ -10,9 +10,9 @@ namespace App.Services
   {
     string uniqueFieldName { get; set; }
     Task<T> Get(string uniqueField);
-    Task<T> Get(string uniqueField, IViewOption options);
+    Task<T> Get(string uniqueField, IDBViewOption options);
     Task<List<T>> Get(JsonElement condition);
-    Task<List<T>> Get(JsonElement condition, IViewOption options);
+    Task<List<T>> Get(JsonElement condition, IDBViewOption options);
     Task<CUDMessage> Add(T newItem);
     Task<CUDMessage> Add(List<T> newItems);
     Task<CUDMessage> Update(string uniqueField, JsonElement token);

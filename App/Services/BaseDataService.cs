@@ -32,7 +32,7 @@ namespace App.Services
       return await collection.Find(condition).FirstOrDefaultAsync();
     }
 
-    public async Task<T> Get(string uniqueField, IViewOption options)
+    public async Task<T> Get(string uniqueField, IDBViewOption options)
     {
 
       FilterDefinition<T> condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
@@ -54,7 +54,7 @@ namespace App.Services
       return await collection.Find(filter).ToListAsync();
     }
 
-    public async Task<List<T>> Get(JsonElement condition, IViewOption options)
+    public async Task<List<T>> Get(JsonElement condition, IDBViewOption options)
     {
       FilterDefinition<T> filter = condition.ToString();
 
