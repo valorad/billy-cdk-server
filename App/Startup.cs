@@ -54,25 +54,38 @@ namespace App
             // add GraphQL
             // services.AddSingleton<RootGraph>();
             services.AddSingleton<Query>();
+            services.AddSingleton<Mutation>();
             services.AddSingleton<ISchema>(provider => Schema.For(@"
                 type Player {
-                    _id: ID!
-                    dbname: String!
-                    isPremium: Boolean!
-                    games: [String]!
+                    _id: ID
+                    dbname: String
+                    isPremium: Boolean
+                    games: [String]
                 }
 
                 input PlayerView {
                     dbname: String!
                     isPremium: Boolean!
+                    games: [String]
+                }
+
+                type CUDMessage {
+                    ok: Boolean
+                    numAffected: Int
+                    message: String
                 }
 
                 type Query {
                     player(dbname: String!): Player
                 }
+
+                type Mutation {
+                    addPlayer(newPlayer: PlayerView!): CUDMessage
+                }
             ", _ =>
             {
                 _.Types.Include<Query>();
+                _.Types.Include<Mutation>();
                 _.ServiceProvider = provider;
             }));
 

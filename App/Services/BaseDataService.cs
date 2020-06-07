@@ -71,23 +71,25 @@ namespace App.Services
 
     public async Task<CUDMessage> Add(T newItem)
     {
-      var message = new CUDMessage()
-      {
-        NumAffected = 1,
-        OK = true
-      };
       try
       {
         await collection.InsertOneAsync(newItem);
+        return new CUDMessage()
+        {
+          OK = true,
+          NumAffected = 1,
+          Message = "",
+        };
       }
       catch (Exception e)
       {
-        Console.WriteLine(e.ToString());
-        message.OK = false;
-        message.NumAffected = 0;
+        return new CUDMessage()
+        {
+          OK = true,
+          NumAffected = 0,
+          Message = e.ToString(),
+        };
       }
-
-      return message;
     }
 
     public async Task<CUDMessage> Add(List<T> newItems)
