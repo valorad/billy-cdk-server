@@ -1,3 +1,4 @@
 type Mutation {
   addPlayer(newPlayer: PlayerView!): CUDMessage
+  addPlayers(newPlayers: [PlayerView]!): CUDMessage
 }
