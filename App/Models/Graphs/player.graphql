@@ -1,0 +1,12 @@
+type Player {
+  _id: ID
+  dbname: String
+  isPremium: Boolean
+  games: [String]
+}
+
+input PlayerView {
+  dbname: String!
+  isPremium: Boolean!
+  games: [String]
+}

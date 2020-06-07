@@ -1,0 +1,4 @@
+type Query {
+  player(dbname: String!): Player
+}
+

@@ -1,0 +1,5 @@
+type CUDMessage {
+  ok: Boolean
+  numAffected: Int
+  message: String
+}
