@@ -19,6 +19,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using App.Lib;
+using GraphQL;
 
 namespace App
 {
@@ -56,14 +57,21 @@ namespace App
       // add GraphQL
       services.AddSingleton<Query>();
       services.AddSingleton<Mutation>();
+      services.AddSingleton<JsonGraphType>();
       services.AddSingleton<ISchema>(
-        (provider) => Schema.For(Graph.LoadDefinitions(), _ =>
-          {
-            _.Types.Include<Query>();
-            _.Types.Include<Mutation>();
-            _.ServiceProvider = provider;
-          }
-        )
+        (provider) => {
+          var schema = Schema.For(Graph.LoadDefinitions(), _ =>
+            {
+              _.Types.Include<Query>();
+              _.Types.Include<Mutation>();
+              _.ServiceProvider = provider;
+            }
+          );
+          schema.RegisterValueConverter(new JsonGraphTypeConverter());
+          return schema;
+        }
+
+
       );
 
       services

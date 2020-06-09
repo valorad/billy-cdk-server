@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,11 +16,15 @@ namespace App.Lib
         .Where(file => extensions.Any(file.ToLower().EndsWith)).ToList();
 
       string typeDefs = "";
+      // typeDefs += "scalar Json \n";
       // read text from each file and combine
       foreach (var file in files)
       {
         typeDefs += File.ReadAllText(file);
       }
+
+      Console.WriteLine(typeDefs);
+
       return typeDefs;
     }
   }
