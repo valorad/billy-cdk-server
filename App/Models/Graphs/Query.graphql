@@ -1,4 +1,4 @@
 type Query {
-  player(dbname: String!): Player
+  player(dbname: String!, options: String): Player
 }
 

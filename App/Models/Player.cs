@@ -14,7 +14,7 @@ namespace App.Models
     public string DBName { get; set; }
 
     [BsonElement("isPremium")]
-    public bool IsPremium { get; set; }
+    public bool? IsPremium { get; set; }
 
     [BsonElement("games")]
     public List<string> Games { get; set; }

@@ -5,7 +5,7 @@ namespace App.Models
   public interface IPlayer
   {
     string DBName { get; set; }
-    bool IsPremium { get; set; }
+    bool? IsPremium { get; set; }
     List<string> Games { get; set; }
   }
 }
