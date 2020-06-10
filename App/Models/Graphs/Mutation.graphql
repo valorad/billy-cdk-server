@@ -1,4 +1,8 @@
 type Mutation {
   addPlayer(newPlayer: PlayerView!): CUDMessage
   addPlayers(newPlayers: [PlayerView]!): CUDMessage
+  updatePlayer(dbname: String!, token: String!): CUDMessage
+  updatePlayers(condition: String!, token: String!): CUDMessage
+  deletePlayer(dbname: String!): CUDMessage
+  deletePlayers(condition: String!): CUDMessage
 }

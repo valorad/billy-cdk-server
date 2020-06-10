@@ -18,11 +18,13 @@ namespace App.Controllers.Graphs
 
     public static bool HasRequiredFields(Player newPlayer)
     {
-      // Normally we just need to check string fields. For other types like boolean, int, etc. ,
+      // Normally we just need to check string and nullable fields. For non-nullable types,
       // GraphQL will stop the request for us already if the request mutation is invalid
-      foreach (var field in requiredFields) {
+      foreach (var field in requiredFields)
+      {
         var value = Property.GetValue(newPlayer, field);
-        if (value is null || (string)value == "") {
+        if (value is null || string.IsNullOrWhiteSpace((string)value))
+        {
           return false;
         }
       }
@@ -33,7 +35,6 @@ namespace App.Controllers.Graphs
 
     public static void Polyfill(Player newPlayer)
     {
-
 
       if (newPlayer.Games is null)
       {
@@ -73,6 +74,35 @@ namespace App.Controllers.Graphs
       }
 
     }
+
+    [GraphQLMetadata("players")]
+    public async Task<List<Player>> GetPlayers(string condition, string options)
+    {
+
+      JsonElement conditionInJson;
+
+      if (string.IsNullOrWhiteSpace(condition))
+      {
+        conditionInJson = JsonDocument.Parse("{}").RootElement;
+      }
+      else
+      {
+        conditionInJson = JsonDocument.Parse(condition).RootElement;
+      }
+
+      if (options is { })
+      {
+        JsonElement optionsInJson = JsonDocument.Parse(options).RootElement;
+        var viewOptions = optionsInJson.JSONToObject<DBViewOption>();
+        return await playerService.Get(conditionInJson, viewOptions);
+      }
+      else
+      {
+        return await playerService.Get(conditionInJson);
+      }
+
+    }
+
   }
 
   public partial class Mutation
@@ -102,7 +132,8 @@ namespace App.Controllers.Graphs
 
       // Check if necessary fields are provided
       bool hasRequiredFields = PlayerGraph.HasRequiredFields(newPlayer);
-      if (!hasRequiredFields) {
+      if (!hasRequiredFields)
+      {
         return new CUDMessage()
         {
           OK = false,
@@ -165,9 +196,11 @@ namespace App.Controllers.Graphs
       }
 
       // Check if necessary fields are provided
-      var incompletePlayers = new List<Player>() {};
-      foreach (var player in newPlayers) {
-        if (!PlayerGraph.HasRequiredFields(player)) {
+      var incompletePlayers = new List<Player>() { };
+      foreach (var player in newPlayers)
+      {
+        if (!PlayerGraph.HasRequiredFields(player))
+        {
           incompletePlayers.Add(player);
         }
       }
@@ -200,6 +233,108 @@ namespace App.Controllers.Graphs
       {
         message.Message = $"Successfully added {newPlayers.Count} players.";
       }
+      return message;
+    }
+
+    [GraphQLMetadata("updatePlayer")]
+    public async Task<CUDMessage> UpdatePlayer(string dbname, string token)
+    {
+      JsonElement updateToken = JsonDocument.Parse(token).RootElement;
+
+      CUDMessage message = await playerService.Update(dbname, updateToken);
+
+      if (!message.OK)
+      {
+        Console.WriteLine(message.Message);
+        message.Message = $"Failed to update {dbname}. See logs for details";
+      }
+      else
+      {
+        message.Message = $"Successfully updated {dbname}.";
+      }
+
+      return message;
+
+    }
+
+    [GraphQLMetadata("updatePlayers")]
+    public async Task<CUDMessage> UpdatePlayers(string condition, string token)
+    {
+
+      if (string.IsNullOrWhiteSpace(condition) || condition.Equals("{}"))
+      {
+        return new CUDMessage()
+        {
+          OK = false,
+          NumAffected = 0,
+          Message = "Condition cannot be empty or \"{}\" ",
+        };
+      }
+
+      JsonElement conditionInJson = JsonDocument.Parse(condition).RootElement;
+      JsonElement updateToken = JsonDocument.Parse(token).RootElement;
+
+      CUDMessage message = await playerService.Update(conditionInJson, updateToken);
+
+      if (!message.OK)
+      {
+        Console.WriteLine(message.Message);
+        message.Message = $"Failed to update. See logs for details";
+      }
+      else
+      {
+        message.Message = $"Successfully updated selected players.";
+      }
+
+      return message;
+
+    }
+
+    [GraphQLMetadata("deletePlayer")]
+    public async Task<CUDMessage> DeletePlayer(string dbname)
+    {
+
+      CUDMessage message = await playerService.Delete(dbname);
+      if (!message.OK)
+      {
+        Console.WriteLine(message.Message);
+        message.Message = $"Failed to delete {dbname}. See logs for details";
+      }
+      else
+      {
+        message.Message = $"Successfully deleted {dbname}.";
+      }
+
+      return message;
+    }
+
+    [GraphQLMetadata("deletePlayers")]
+    public async Task<CUDMessage> DeletePlayers(string condition)
+    {
+
+      if (string.IsNullOrWhiteSpace(condition) || condition.Equals("{}"))
+      {
+        return new CUDMessage()
+        {
+          OK = false,
+          NumAffected = 0,
+          Message = "Condition cannot be empty or \"{}\" ",
+        };
+      }
+
+      JsonElement conditionInJson = JsonDocument.Parse(condition).RootElement;
+
+      CUDMessage message = await playerService.Delete(conditionInJson);
+      if (!message.OK)
+      {
+        Console.WriteLine(message.Message);
+        message.Message = $"Failed to delete. See logs for details";
+      }
+      else
+      {
+        message.Message = $"Successfully deleted selected players.";
+      }
+
       return message;
     }
 

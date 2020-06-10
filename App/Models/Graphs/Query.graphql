@@ -1,4 +1,5 @@
 type Query {
   player(dbname: String!, options: String): Player
+  players(condition: String, options: String): [Player]
 }
 
