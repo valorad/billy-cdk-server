@@ -1,0 +1,8 @@
+type Game {
+  _id: ID
+  dbname: String
+}
+
+input GameView {
+  dbname: String!
+}

@@ -5,4 +5,11 @@ type Mutation {
   updatePlayers(condition: String!, token: String!): CUDMessage
   deletePlayer(dbname: String!): CUDMessage
   deletePlayers(condition: String!): CUDMessage
+
+  addGame(newGame: GameView!): CUDMessage
+  addGames(newGames: [GameView]!): CUDMessage
+  updateGame(dbname: String!, token: String!): CUDMessage
+  updateGames(condition: String!, token: String!): CUDMessage
+  deleteGame(dbname: String!): CUDMessage
+  deleteGames(condition: String!): CUDMessage
 }

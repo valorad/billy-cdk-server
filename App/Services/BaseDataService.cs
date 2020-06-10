@@ -117,7 +117,14 @@ namespace App.Services
 
     public async Task<CUDMessage> Update(string uniqueField, JsonElement token)
     {
-      FilterDefinition<T> condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
+
+      FilterDefinition<T> condition;
+      if (uniqueFieldName == "_id") {
+        condition = Builders<T>.Filter.Eq("_id", ObjectId.Parse(uniqueField));
+      } else {
+        condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
+      }
+
       UpdateDefinition<T> updateToken = token.ToString();
       try
       {
@@ -167,7 +174,14 @@ namespace App.Services
 
     public async Task<CUDMessage> Delete(string uniqueField)
     {
-      FilterDefinition<T> condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
+
+      FilterDefinition<T> condition;
+
+      if (uniqueFieldName == "_id") {
+        condition = Builders<T>.Filter.Eq("_id", ObjectId.Parse(uniqueField));
+      } else {
+        condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
+      }
 
       try
       {
