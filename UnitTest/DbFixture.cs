@@ -33,7 +33,7 @@ namespace UnitTest
       // add endpoints
       services.AddSingleton<IPlayerService, PlayerService>();
       services.AddSingleton<IGameService, GameService>();
-      services.AddSingleton<ICDKService, CDKService>();
+      services.AddSingleton<ICDKeyService, CDKeyService>();
 
       ServiceProvider = services.BuildServiceProvider();
     }

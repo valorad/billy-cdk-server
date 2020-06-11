@@ -4,5 +4,8 @@ type Query {
 
   game(dbname: String!, options: String): Game
   games(condition: String, options: String): [Game]
+
+  cdkey(id: ID!, options: String): CDKey
+  cdkeys(condition: String, options: String): [CDKey]
 }
 

@@ -13,23 +13,23 @@ namespace App.Models
     public string Player { get; set; }
 
     [BsonElement("game")]
-    [BsonRequired]
+    // [BsonRequired]
     public string Game { get; set; }
 
     [BsonElement("value")]
-    [BsonRequired]
+    // [BsonRequired]
     public string Value { get; set; }
 
     [BsonElement("isActivated")]
-    [BsonRequired]
-    public bool IsActivated { get; set; }
+    // [BsonRequired]
+    public bool? IsActivated { get; set; }
 
     [BsonElement("price")]
-    [BsonRequired]
-    public double Price { get; set; }
+    // [BsonRequired]
+    public double? Price { get; set; }
 
     [BsonElement("platform")]
-    [BsonRequired]
+    // [BsonRequired]
     public string Platform { get; set; }
 
   }

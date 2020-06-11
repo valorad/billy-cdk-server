@@ -7,11 +7,11 @@ using App.Models;
 
 namespace App.Services
 {
-  public class CDKService : BaseDataService<CDKey>, ICDKService
+  public class CDKeyService : BaseDataService<CDKey>, ICDKeyService
   {
     public IPlayerService playerService { get; }
 
-    public CDKService(
+    public CDKeyService(
       IDBCollection collection,
       IPlayerService playerService
       ) : base(collection.CDKeys)
@@ -52,7 +52,7 @@ namespace App.Services
       }
 
       // check if cdk already activated + if player already owns the game
-      if (cdkey.IsActivated) {
+      if (cdkey.IsActivated ?? false) {
         throw new System.Exception($"cdkey {value} has already been activated by {cdkey.Player}.");
       }
 
@@ -100,7 +100,7 @@ namespace App.Services
       // check if cdk already activated + if player already owns the game
       validCDKeys = (
         from validCDKey in validCDKeys
-        where (!validCDKey.IsActivated && !player.Games.Exists(ele => ele == validCDKey.Game))
+        where (!(validCDKey.IsActivated ?? false) && !player.Games.Exists(ele => ele == validCDKey.Game))
         select validCDKey
       ).ToList();
 

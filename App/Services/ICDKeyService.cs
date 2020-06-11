@@ -4,7 +4,7 @@ using App.Models;
 
 namespace App.Services
 {
-  public interface ICDKService : IBaseDataService<CDKey>
+  public interface ICDKeyService : IBaseDataService<CDKey>
   {
     Task<CDKey> GetByValue(string value);
     Task<List<CDKey>> GetByValue(List<string> values);

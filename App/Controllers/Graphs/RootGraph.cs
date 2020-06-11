@@ -7,17 +7,17 @@ namespace App.Controllers.Graphs
   {
     private readonly IPlayerService playerService; 
     private readonly IGameService gameService;
-    private readonly ICDKService cdkService;
+    private readonly ICDKeyService cdkeyService;
 
     public Query(
       IPlayerService playerService,
       IGameService gameService,
-      ICDKService cdkService
+      ICDKeyService cdkeyService
     )
     {
       this.playerService = playerService;
       this.gameService = gameService;
-      this.cdkService = cdkService;
+      this.cdkeyService = cdkeyService;
     }
   }
 
@@ -25,17 +25,17 @@ namespace App.Controllers.Graphs
   {
     private readonly IPlayerService playerService; 
     private readonly IGameService gameService;
-    private readonly ICDKService cdkService;
+    private readonly ICDKeyService cdkeyService;
 
     public Mutation(
       IPlayerService playerService,
       IGameService gameService,
-      ICDKService cdkService
+      ICDKeyService cdkeyService
     )
     {
       this.playerService = playerService;
       this.gameService = gameService;
-      this.cdkService = cdkService;
+      this.cdkeyService = cdkeyService;
     }
   }
 

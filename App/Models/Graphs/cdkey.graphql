@@ -1,0 +1,18 @@
+type CDKey {
+  id: ID
+  player: String
+  game: String
+  value: String
+  isActivated: Boolean
+  price: Float
+  platform: String
+}
+
+input CDKeyView {
+  player: String
+  game: String!
+  value: String!
+  isActivated: Boolean!
+  price: Float!
+  platform: String!
+}

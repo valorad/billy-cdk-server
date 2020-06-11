@@ -52,7 +52,7 @@ namespace App
       // add services
       services.AddSingleton<IPlayerService, PlayerService>();
       services.AddSingleton<IGameService, GameService>();
-      services.AddSingleton<ICDKService, CDKService>();
+      services.AddSingleton<ICDKeyService, CDKeyService>();
 
       // add GraphQL
       services.AddSingleton<Query>();
