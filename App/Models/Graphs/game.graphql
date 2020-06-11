@@ -1,5 +1,5 @@
 type Game {
-  _id: ID
+  id: ID
   dbname: String
 }
 

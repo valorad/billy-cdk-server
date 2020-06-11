@@ -1,5 +1,5 @@
 type Player {
-  _id: ID
+  id: ID
   dbname: String
   isPremium: Boolean
   games: [String]

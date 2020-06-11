@@ -20,22 +20,29 @@ namespace App.Services
         this.collection = collection;
     }
 
-    public async Task<T> Get(string uniqueField)
-    {
+    private FilterDefinition<T> BuildConditions(string uniqueFieldValue) {
+
       FilterDefinition<T> condition;
       if (uniqueFieldName == "_id") {
-        condition = Builders<T>.Filter.Eq("_id", ObjectId.Parse(uniqueField));
+        condition = Builders<T>.Filter.Eq("_id", ObjectId.Parse(uniqueFieldValue));
       } else {
-        condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
+        condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueFieldValue}\"" + "}";
       }
+      return condition;
+
+    }
+
+    public async Task<T> Get(string uniqueFieldValue)
+    {
+      FilterDefinition<T> condition = BuildConditions(uniqueFieldValue);
 
       return await collection.Find(condition).FirstOrDefaultAsync();
     }
 
-    public async Task<T> Get(string uniqueField, IDBViewOption options)
+    public async Task<T> Get(string uniqueFieldValue, IDBViewOption options)
     {
 
-      FilterDefinition<T> condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
+      FilterDefinition<T> condition = BuildConditions(uniqueFieldValue);
 
       var query = collection.Find(condition);
 
@@ -115,15 +122,10 @@ namespace App.Services
       }
     }
 
-    public async Task<CUDMessage> Update(string uniqueField, JsonElement token)
+    public async Task<CUDMessage> Update(string uniqueFieldValue, JsonElement token)
     {
 
-      FilterDefinition<T> condition;
-      if (uniqueFieldName == "_id") {
-        condition = Builders<T>.Filter.Eq("_id", ObjectId.Parse(uniqueField));
-      } else {
-        condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
-      }
+      FilterDefinition<T> condition = BuildConditions(uniqueFieldValue);
 
       UpdateDefinition<T> updateToken = token.ToString();
       try
@@ -172,16 +174,10 @@ namespace App.Services
       }
     }
 
-    public async Task<CUDMessage> Delete(string uniqueField)
+    public async Task<CUDMessage> Delete(string uniqueFieldValue)
     {
 
-      FilterDefinition<T> condition;
-
-      if (uniqueFieldName == "_id") {
-        condition = Builders<T>.Filter.Eq("_id", ObjectId.Parse(uniqueField));
-      } else {
-        condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueField}\"" + "}";
-      }
+      FilterDefinition<T> condition = BuildConditions(uniqueFieldValue);
 
       try
       {
