@@ -16,6 +16,6 @@ namespace App.Database
 
     public IMongoCollection<Player> Players => dbInstance.GetCollection<Player>("players");
     public IMongoCollection<Game> Games => dbInstance.GetCollection<Game>("games");
-    public IMongoCollection<CDKey> CDKeys => dbInstance.GetCollection<CDKey>("cdKeys");
+    public IMongoCollection<CDKey> CDKeys => dbInstance.GetCollection<CDKey>("cdkeys");
   }
 }

@@ -378,28 +378,16 @@ namespace App.Controllers.Graphs
 
   public partial class Query
   {
-
-    // private readonly IPlayerService playerService; 
-    // private readonly IGameService gameService;
-    // private readonly ICDKeyService cdkeyService;
     private readonly PlayerGraph playerGraph;
     private readonly GameGraph gameGraph;
     private readonly CDKeyGraph cdkeyGraph;
 
     public Query(
-      // IPlayerService playerService,
-      // IGameService gameService,
-      // ICDKeyService cdkeyService,
-
       PlayerGraph playerGraph,
       GameGraph gameGraph,
       CDKeyGraph cdkeyGraph
     )
     {
-      // this.playerService = playerService;
-      // this.gameService = gameService;
-      // this.cdkeyService = cdkeyService;
-
       this.playerGraph = playerGraph;
       this.gameGraph = gameGraph;
       this.cdkeyGraph = cdkeyGraph;
@@ -412,28 +400,15 @@ namespace App.Controllers.Graphs
     private readonly GameGraph gameGraph;
     private readonly CDKeyGraph cdkeyGraph;
 
-    // private readonly IPlayerService playerService; 
-    // private readonly IGameService gameService;
-    // private readonly ICDKeyService cdkeyService;
-
     public Mutation(
-      // IPlayerService playerService,
-      // IGameService gameService,
-      // ICDKeyService cdkeyService,
-
       PlayerGraph playerGraph,
       GameGraph gameGraph,
       CDKeyGraph cdkeyGraph
     )
     {
-      // this.playerService = playerService;
-      // this.gameService = gameService;
-      // this.cdkeyService = cdkeyService;
-
       this.playerGraph = playerGraph;
       this.gameGraph = gameGraph;
       this.cdkeyGraph = cdkeyGraph;
-
     }
   }
 

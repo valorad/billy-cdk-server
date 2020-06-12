@@ -1,9 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
-using App.Lib;
 using App.Models;
 using App.Services;
 using GraphQL;
@@ -13,7 +9,7 @@ namespace App.Controllers.Graphs
   public class PlayerGraph : RootGraph<Player>
   {
 
-    public PlayerGraph(IPlayerService playerService): base(playerService)
+    public PlayerGraph(IPlayerService playerService) : base(playerService)
     {
 
       this.itemName = "player";
@@ -55,7 +51,6 @@ namespace App.Controllers.Graphs
     public async Task<List<Player>> GetPlayers(string condition, string options)
     {
       return await playerGraph.GetList(condition, options);
-
     }
 
   }
