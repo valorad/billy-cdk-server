@@ -56,6 +56,8 @@ namespace App
 
       // add GraphQL
       services.AddSingleton<PlayerGraph>();
+      services.AddSingleton<GameGraph>();
+      services.AddSingleton<CDKeyGraph>();
       services.AddSingleton<Query>();
       services.AddSingleton<Mutation>();
       services.AddSingleton<JsonGraphType>();

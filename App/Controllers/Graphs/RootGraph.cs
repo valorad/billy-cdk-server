@@ -10,12 +10,12 @@ using App.Services;
 namespace App.Controllers.Graphs
 {
 
-  public class RootGraph<T> {
-
+  public class RootGraph<T>
+  {
     public string itemName = "item";
     public string defaultField = "ID";
-    public List<string> requiredFields = new List<string>(){}; // Usually the string fields that should not be empty. e.g. dbname
-    public List<string> uniqueFields = new List<string>(){}; // Fields (except "_id") that are required to be unique
+    public List<string> requiredFields = new List<string>() { }; // Usually the string fields that should not be empty. e.g. dbname
+    public List<string> uniqueFields = new List<string>() { }; // Fields (except "_id") that are required to be unique
     private readonly IBaseDataService<T> baseDataService;
 
     public RootGraph(
@@ -103,11 +103,11 @@ namespace App.Controllers.Graphs
       if (!message.OK)
       {
         Console.WriteLine(message.Message);
-        message.Message = $"Failed to add {itemName} with {defaultField} = {Property.GetValue(newItem, defaultField )}. See log for more details.";
+        message.Message = $"Failed to add {itemName} with {defaultField} = {Property.GetValue(newItem, defaultField)}. See log for more details.";
       }
       else
       {
-        message.Message = $"Successfully added {itemName} with {defaultField} = {Property.GetValue(newItem, defaultField )}.";
+        message.Message = $"Successfully added {itemName} with {defaultField} = {Property.GetValue(newItem, defaultField)}.";
       }
       return message;
     }
@@ -259,19 +259,22 @@ namespace App.Controllers.Graphs
       return message;
     }
 
-    public virtual void Polyfill(T newItem){}
+    public virtual void Polyfill(T newItem) { }
 
-    public void Polyfill(List<T> newItems){
+    public void Polyfill(List<T> newItems)
+    {
       foreach (var item in newItems)
       {
         Polyfill(item);
       }
     }
 
-    private async Task<FieldInspectionMessage> CheckNewItemUnique(T newItem) {
+    private async Task<FieldInspectionMessage> CheckNewItemUnique(T newItem)
+    {
 
-      foreach (var fieldName in uniqueFields) {
-        string condition =  "{"
+      foreach (var fieldName in uniqueFields)
+      {
+        string condition = "{"
         + $" \"{fieldName}\": \"{Property.GetValue(newItem, fieldName)}\" "
         + "}";
 
@@ -287,57 +290,66 @@ namespace App.Controllers.Graphs
 
         if (itemInDB is { })
         {
-          return new FieldInspectionMessage() {
+          return new FieldInspectionMessage()
+          {
             IsPassed = false,
             failedField = fieldName
           };
         }
       }
 
-      return new FieldInspectionMessage() {
+      return new FieldInspectionMessage()
+      {
         IsPassed = true,
         failedField = null
       };
 
     }
 
-    private FieldInspectionMessage CheckNewItemComplete(T newItem) {
+    private FieldInspectionMessage CheckNewItemComplete(T newItem)
+    {
 
       foreach (var field in requiredFields)
       {
         var value = Property.GetValue(newItem, field);
         if (value is null || string.IsNullOrWhiteSpace((string)value))
         {
-          return new FieldInspectionMessage() {
+          return new FieldInspectionMessage()
+          {
             IsPassed = false,
             failedField = field
           };
         }
       }
 
-      return new FieldInspectionMessage() {
+      return new FieldInspectionMessage()
+      {
         IsPassed = true,
         failedField = null
       };
     }
 
-    private async Task RemoveConflictItems(List<T> newItems) {
-      var conflictItems = new List<T>() {};
-      foreach (var item in newItems) {
+    private async Task RemoveConflictItems(List<T> newItems)
+    {
+      var conflictItems = new List<T>() { };
+      foreach (var item in newItems)
+      {
         FieldInspectionMessage uniquenessMessage = await CheckNewItemUnique(item);
-        if (!uniquenessMessage.IsPassed) {
+        if (!uniquenessMessage.IsPassed)
+        {
           conflictItems.Add(item);
         }
       }
 
       foreach (var item in conflictItems)
       {
-        newItems.Remove(newItems.Find(ele => Property.GetValue(ele, defaultField ) == Property.GetValue(item, defaultField )));
+        newItems.Remove(newItems.Find(ele => Property.GetValue(ele, defaultField) == Property.GetValue(item, defaultField)));
       }
 
     }
 
-    private void RemoveIncompleteItems(List<T> newItems) {
+    private void RemoveIncompleteItems(List<T> newItems)
+    {
       var incompleteItems = new List<T>() { };
       foreach (var item in newItems)
       {
@@ -350,21 +362,15 @@ namespace App.Controllers.Graphs
       // Remove incomplete players
       foreach (var item in incompleteItems)
       {
-        newItems.Remove(newItems.Find(ele => Property.GetValue(ele, defaultField ) == Property.GetValue(item, defaultField )));
+        newItems.Remove(newItems.Find(ele => Property.GetValue(ele, defaultField) == Property.GetValue(item, defaultField)));
       }
 
     }
 
-
-
-
-
-
-
-
   }
 
-  public class FieldInspectionMessage {
+  public class FieldInspectionMessage
+  {
     public bool IsPassed { get; set; }
     public string failedField { get; set; }
   }
@@ -372,47 +378,62 @@ namespace App.Controllers.Graphs
 
   public partial class Query
   {
+
     // private readonly IPlayerService playerService; 
-    private readonly IGameService gameService;
-    private readonly ICDKeyService cdkeyService;
+    // private readonly IGameService gameService;
+    // private readonly ICDKeyService cdkeyService;
     private readonly PlayerGraph playerGraph;
+    private readonly GameGraph gameGraph;
+    private readonly CDKeyGraph cdkeyGraph;
 
     public Query(
       // IPlayerService playerService,
-      IGameService gameService,
-      ICDKeyService cdkeyService,
+      // IGameService gameService,
+      // ICDKeyService cdkeyService,
 
-      PlayerGraph playerGraph
+      PlayerGraph playerGraph,
+      GameGraph gameGraph,
+      CDKeyGraph cdkeyGraph
     )
     {
       // this.playerService = playerService;
-      this.gameService = gameService;
-      this.cdkeyService = cdkeyService;
+      // this.gameService = gameService;
+      // this.cdkeyService = cdkeyService;
 
       this.playerGraph = playerGraph;
+      this.gameGraph = gameGraph;
+      this.cdkeyGraph = cdkeyGraph;
     }
   }
 
   public partial class Mutation
   {
     private readonly PlayerGraph playerGraph;
+    private readonly GameGraph gameGraph;
+    private readonly CDKeyGraph cdkeyGraph;
+
     // private readonly IPlayerService playerService; 
-    private readonly IGameService gameService;
-    private readonly ICDKeyService cdkeyService;
+    // private readonly IGameService gameService;
+    // private readonly ICDKeyService cdkeyService;
 
     public Mutation(
       // IPlayerService playerService,
-      IGameService gameService,
-      ICDKeyService cdkeyService,
+      // IGameService gameService,
+      // ICDKeyService cdkeyService,
 
-      PlayerGraph playerGraph
+      PlayerGraph playerGraph,
+      GameGraph gameGraph,
+      CDKeyGraph cdkeyGraph
     )
     {
       // this.playerService = playerService;
-      this.gameService = gameService;
-      this.cdkeyService = cdkeyService;
+      // this.gameService = gameService;
+      // this.cdkeyService = cdkeyService;
 
       this.playerGraph = playerGraph;
+      this.gameGraph = gameGraph;
+      this.cdkeyGraph = cdkeyGraph;
+
     }
   }
 
