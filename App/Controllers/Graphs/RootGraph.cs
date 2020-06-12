@@ -79,7 +79,7 @@ namespace App.Controllers.Graphs
         {
           OK = false,
           NumAffected = 0,
-          Message = $"Failed to add the {itemName} because {completenessMessage.failedField} (or more fields) is not provided. The Required fields: {string.Join(", ", requiredFields)}",
+          Message = $"Failed to add the {itemName} because {completenessMessage.FailedField} (or more fields) is not provided. The Required fields: {string.Join(", ", requiredFields)}",
         };
       }
 
@@ -91,7 +91,7 @@ namespace App.Controllers.Graphs
         {
           OK = false,
           NumAffected = 0,
-          Message = $"Conflict detected when adding the {itemName} with {uniquenessMessage.failedField} = {Property.GetValue(newItem, uniquenessMessage.failedField)}",
+          Message = $"Conflict detected when adding the {itemName} with {uniquenessMessage.FailedField} = {Property.GetValue(newItem, uniquenessMessage.FailedField)}",
         };
       }
 
@@ -140,7 +140,7 @@ namespace App.Controllers.Graphs
         {
           OK = false,
           NumAffected = 0,
-          Message = $"No {itemName}(s) to add because of non of these inputs are valid. Try add them one by one if you are not sure why.",
+          Message = $"No {itemName} to add because non of these inputs are valid. Try add them one by one if you are not sure why.",
         };
       }
 
@@ -293,7 +293,7 @@ namespace App.Controllers.Graphs
           return new FieldInspectionMessage()
           {
             IsPassed = false,
-            failedField = fieldName
+            FailedField = fieldName
           };
         }
       }
@@ -301,7 +301,7 @@ namespace App.Controllers.Graphs
       return new FieldInspectionMessage()
       {
         IsPassed = true,
-        failedField = null
+        FailedField = null
       };
 
     }
@@ -317,7 +317,7 @@ namespace App.Controllers.Graphs
           return new FieldInspectionMessage()
           {
             IsPassed = false,
-            failedField = field
+            FailedField = field
           };
         }
       }
@@ -325,7 +325,7 @@ namespace App.Controllers.Graphs
       return new FieldInspectionMessage()
       {
         IsPassed = true,
-        failedField = null
+        FailedField = null
       };
     }
 
@@ -372,7 +372,8 @@ namespace App.Controllers.Graphs
   public class FieldInspectionMessage
   {
     public bool IsPassed { get; set; }
-    public string failedField { get; set; }
+    public string FailedField { get; set; }
+    public string Message { get; set; }
   }
 
 

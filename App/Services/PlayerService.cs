@@ -44,20 +44,34 @@ namespace App.Services
       return await Update(player, JsonDocument.Parse(updateToken).RootElement);
     }
 
-    public async Task<bool> DoesOwnTheGame(string playerName, string gameName)
+    # region AddGame Aliases
+
+    public async Task<CUDMessage> AddGame(Player player, string game)
     {
-      Player player = await Get(playerName);
-
-      if (player is null) {
-        Console.WriteLine("Player does not exist");
-        return false;
-      }
-
-      return player.Games.Exists(ele => ele == gameName);
-
+      return await AddGame(player.DBName, game);
     }
 
+    public async Task<CUDMessage> AddGame(Player player, List<string> games)
+    {
+      return await AddGame(player.DBName, games);
+    }
 
+    public async Task<CUDMessage> AddGame(Player player, Game game)
+    {
+      return await AddGame(player.DBName, game.DBName);
+    }
+
+    public async Task<CUDMessage> AddGame(Player player, List<Game> games)
+    {
+      var gameNames = new List<string>();
+      foreach (var game in games)
+      {
+        gameNames.Add(game.DBName);
+      }
+      return await AddGame(player.DBName, gameNames);
+    }
+
+    # endregion
 
   }
 
