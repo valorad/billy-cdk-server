@@ -55,6 +55,7 @@ namespace App
       services.AddSingleton<ICDKeyService, CDKeyService>();
 
       // add GraphQL
+      services.AddSingleton<PlayerGraph>();
       services.AddSingleton<Query>();
       services.AddSingleton<Mutation>();
       services.AddSingleton<JsonGraphType>();
