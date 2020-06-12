@@ -20,26 +20,48 @@ namespace App.Services
       this.playerService = playerService;
     }
 
-    public async Task<CDKey> GetByValue(string value) {
+    public async Task<CDKey> GetByValue(string value, IDBViewOption options = null)
+    {
       string condition = "{"
         + $"\"value\": \"{value}\" "
       + "}";
-      List<CDKey> cdKeys = await Get(JsonDocument.Parse(condition).RootElement);
-      if (cdKeys is {} && cdKeys.Count >= 1) {
-        return cdKeys[0];
+
+      List<CDKey> cdKeys;
+
+      if (options is { })
+      {
+        cdKeys = await Get(JsonDocument.Parse(condition).RootElement, options);
       }
-      return null;
+      else
+      {
+        cdKeys = await Get(JsonDocument.Parse(condition).RootElement);
+      }
+
+      return cdKeys.ElementAtOrDefault(0);
+
     }
 
-    public async Task<List<CDKey>> GetByValue(List<string> values) {
+    public async Task<List<CDKey>> GetByValue(List<string> values, IDBViewOption options = null)
+    {
       var valueQuoted = from ele in values select $"\"{ele}\"";
       string valueInText = string.Join(", ", valueQuoted);
-      string conditions = "{"
+      string condition = "{"
       + " \"value\": " + "{"
         + "\"$in\": [" + valueInText + "]"
         + "}"
       + "}";
-      List<CDKey> cdKeys = await Get(JsonDocument.Parse(conditions).RootElement);
+
+      List<CDKey> cdKeys;
+
+      if (options is { })
+      {
+        cdKeys = await Get(JsonDocument.Parse(condition).RootElement, options);
+      }
+      else
+      {
+        cdKeys = await Get(JsonDocument.Parse(condition).RootElement);
+      }
+
       return cdKeys;
     }
 
@@ -47,30 +69,35 @@ namespace App.Services
     {
 
       CDKey cdkey = await GetByValue(value);
-      if (cdkey is null) {
+      if (cdkey is null)
+      {
         throw new System.Exception($"Unable to find CDKey {value}.");
       }
 
       // check if cdk already activated + if player already owns the game
-      if (cdkey.IsActivated ?? false) {
+      if (cdkey.IsActivated ?? false)
+      {
         throw new System.Exception($"cdkey {value} has already been activated by {cdkey.Player}.");
       }
 
       Player player = await playerService.Get(playerName);
       bool IsTheGameOwned = player.Games.Exists(ele => ele == cdkey.Game);
 
-      if (IsTheGameOwned) {
+      if (IsTheGameOwned)
+      {
         throw new System.Exception($"{cdkey.Player} already owns {cdkey.Game}.");
       }
 
       // update CDKey isActivated field
       CUDMessage cdkUpdateResult = await UpdateIsActivated(value, true);
 
-      if (!cdkUpdateResult.OK) {
+      if (!cdkUpdateResult.OK)
+      {
         throw new System.Exception($"Failed to update CDKey {value}.");
       }
 
-      if (cdkUpdateResult.NumAffected <= 0) {
+      if (cdkUpdateResult.NumAffected <= 0)
+      {
         throw new System.Exception($"Invalid CDKey {value} provided.");
       }
 
@@ -78,10 +105,11 @@ namespace App.Services
       cdkUpdateResult = await UpdatePlayer(value, playerName);
 
       // add the game to player
-      
+
       CUDMessage playerUpdateResult = await playerService.AddGame(playerName, cdkey.Game);
 
-      if (!playerUpdateResult.OK) {
+      if (!playerUpdateResult.OK)
+      {
         throw new System.Exception($"Failed to add {cdkey.Game} to {playerName}.");
       }
 
@@ -106,33 +134,39 @@ namespace App.Services
 
       // update CDKey isActivated field
       // mark the player who activates cdkey
-      var successfullyActivatedCDKeys = new List<CDKey>() {};
+      var successfullyActivatedCDKeys = new List<CDKey>() { };
 
-      foreach (var validCDKey in validCDKeys) {
+      foreach (var validCDKey in validCDKeys)
+      {
         CUDMessage cdkUpdateResult = await UpdateIsActivated(validCDKey.Value, true);
-        if (cdkUpdateResult.OK && (cdkUpdateResult.NumAffected > 0)) {
+        if (cdkUpdateResult.OK && (cdkUpdateResult.NumAffected > 0))
+        {
           cdkUpdateResult = await UpdatePlayer(validCDKey.Value, playerName);
           successfullyActivatedCDKeys.Add(validCDKey);
         }
       }
 
       // mark the player who activates cdkey
-      foreach (var successfullyActivatedCDKey in successfullyActivatedCDKeys) {
+      foreach (var successfullyActivatedCDKey in successfullyActivatedCDKeys)
+      {
         await UpdatePlayer(successfullyActivatedCDKey.Value, playerName);
       }
 
       // add the game to player
-      var successfullyAddedCDKeys = new List<CDKey>() {};
-      foreach (var cdKey in successfullyActivatedCDKeys) {
+      var successfullyAddedCDKeys = new List<CDKey>() { };
+      foreach (var cdKey in successfullyActivatedCDKeys)
+      {
         CUDMessage playerUpdateResult = await playerService.AddGame(playerName, cdKey.Game);
-        if (playerUpdateResult.OK) {
+        if (playerUpdateResult.OK)
+        {
           successfullyAddedCDKeys.Add(cdKey);
         }
       }
 
       // return sucessfully updated cdkeys list
-      var dbUpdatedCDkeys = new List<CDKey>() {};
-      foreach (var cdKey in successfullyAddedCDKeys) {
+      var dbUpdatedCDkeys = new List<CDKey>() { };
+      foreach (var cdKey in successfullyAddedCDKeys)
+      {
         dbUpdatedCDkeys.Add(await Get(cdKey.ID));
       }
       return dbUpdatedCDkeys;
@@ -178,7 +212,7 @@ namespace App.Services
       string updateToken = "{"
         + "\"$set\": " + "{"
           + $"\"isActivated\": {newStatus.ToString().ToLower()} "
-        + "}"     
+        + "}"
       + "}";
 
       return await Update(

@@ -6,8 +6,8 @@ namespace App.Services
 {
   public interface ICDKeyService : IBaseDataService<CDKey>
   {
-    Task<CDKey> GetByValue(string value);
-    Task<List<CDKey>> GetByValue(List<string> values);
+    Task<CDKey> GetByValue(string value, IDBViewOption options = null);
+    Task<List<CDKey>> GetByValue(List<string> values, IDBViewOption options = null);
     Task<CUDMessage> ActivateByDBID(string id);
     Task<CDKey> Activate(string player, string value);
     Task<CUDMessage> ActivateByDBID(List<string> ids);

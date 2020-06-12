@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
+using App.Lib;
 using App.Models;
 using App.Services;
 using GraphQL;
@@ -8,6 +10,8 @@ namespace App.Controllers.Graphs
 {
   public class CDKeyGraph : RootGraph<CDKey>
   {
+    private readonly ICDKeyService cdkeyService;
+
     public CDKeyGraph(ICDKeyService cdkeyService) : base(cdkeyService)
     {
       this.itemName = "CDKey";
@@ -24,6 +28,30 @@ namespace App.Controllers.Graphs
         "platform",
       };
 
+      this.cdkeyService = cdkeyService;
+
+    }
+
+    public async Task<CDKey> GetCDKeyByValue(string cdkeyValue, string options)
+    {
+
+      JsonElement optionsInJson = JsonDocument.Parse(options).RootElement;
+      var viewOptions = optionsInJson.JSONToObject<DBViewOption>();
+      return await cdkeyService.GetByValue(cdkeyValue, viewOptions);
+
+    }
+
+    public async Task<CDKey> RerouteSingleQuery(CDKeyQueryParameters cdkeyQueryParameters)
+    {
+      if (cdkeyQueryParameters.ID is { })
+      {
+        return await GetSingle(cdkeyQueryParameters.ID, cdkeyQueryParameters.Options);
+      }
+      if (cdkeyQueryParameters.Value is { })
+      {
+        return await GetCDKeyByValue(cdkeyQueryParameters.Value, cdkeyQueryParameters.Options);
+      }
+      return null;
     }
 
   }
@@ -32,9 +60,9 @@ namespace App.Controllers.Graphs
   {
 
     [GraphQLMetadata("cdkey")]
-    public async Task<CDKey> GetCDKey(string id, string options)
+    public async Task<CDKey> GetCDKey(CDKeyQueryParameters parameters)
     {
-      return await cdkeyGraph.GetSingle(id, options);
+      return await cdkeyGraph.RerouteSingleQuery(parameters);
     }
 
     [GraphQLMetadata("cdkeys")]

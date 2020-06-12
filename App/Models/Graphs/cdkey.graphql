@@ -16,3 +16,9 @@ input CDKeyView {
   price: Float!
   platform: String!
 }
+
+input CDKeyQueryParameters {
+  id: ID
+  value: String
+  options: String
+}
