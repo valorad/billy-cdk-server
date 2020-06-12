@@ -27,18 +27,9 @@ namespace App.Controllers.Graphs
 
     public async Task<T> GetSingle(string defaultFieldValue, string options)
     {
-
-      if (options is { })
-      {
-        JsonElement optionsInJson = JsonDocument.Parse(options).RootElement;
-        var viewOptions = optionsInJson.JSONToObject<DBViewOption>();
-        return await baseDataService.Get(defaultFieldValue, viewOptions);
-      }
-      else
-      {
-        return await baseDataService.Get(defaultFieldValue);
-      }
-
+      JsonElement optionsInJson = JsonDocument.Parse(options).RootElement;
+      var viewOptions = optionsInJson.JSONToObject<DBViewOption>();
+      return await baseDataService.Get(defaultFieldValue, viewOptions);
     }
 
     public async Task<List<T>> GetList(string condition, string options)
@@ -55,17 +46,10 @@ namespace App.Controllers.Graphs
         conditionInJson = JsonDocument.Parse(condition).RootElement;
       }
 
-      if (options is { })
-      {
-        JsonElement optionsInJson = JsonDocument.Parse(options).RootElement;
-        var viewOptions = optionsInJson.JSONToObject<DBViewOption>();
-        return await baseDataService.Get(conditionInJson, viewOptions);
-      }
-      else
-      {
-        return await baseDataService.Get(conditionInJson);
-      }
-
+      JsonElement optionsInJson = JsonDocument.Parse(options).RootElement;
+      var viewOptions = optionsInJson.JSONToObject<DBViewOption>();
+      return await baseDataService.Get(conditionInJson, viewOptions);
+      
     }
 
     public async Task<CUDMessage> AddSingle(T newItem)
@@ -367,13 +351,6 @@ namespace App.Controllers.Graphs
 
     }
 
-  }
-
-  public class FieldInspectionMessage
-  {
-    public bool IsPassed { get; set; }
-    public string FailedField { get; set; }
-    public string Message { get; set; }
   }
 
 

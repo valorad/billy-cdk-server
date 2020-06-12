@@ -17,61 +17,54 @@ namespace App.Services
 
     public BaseDataService(IMongoCollection<T> collection)
     {
-        this.collection = collection;
+      this.collection = collection;
     }
 
-    private FilterDefinition<T> BuildConditions(string uniqueFieldValue) {
+    private FilterDefinition<T> BuildConditions(string uniqueFieldValue)
+    {
 
       FilterDefinition<T> condition;
-      if (uniqueFieldName == "_id") {
+      if (uniqueFieldName == "_id")
+      {
         condition = Builders<T>.Filter.Eq("_id", ObjectId.Parse(uniqueFieldValue));
-      } else {
+      }
+      else
+      {
         condition = "{" + $" \"{uniqueFieldName}\": " + $"\"{uniqueFieldValue}\"" + "}";
       }
       return condition;
 
     }
 
-    public async Task<T> Get(string uniqueFieldValue)
-    {
-      FilterDefinition<T> condition = BuildConditions(uniqueFieldValue);
-
-      return await collection.Find(condition).FirstOrDefaultAsync();
-    }
-
-    public async Task<T> Get(string uniqueFieldValue, IDBViewOption options)
+    public async Task<T> Get(string uniqueFieldValue, IDBViewOption options = null)
     {
 
       FilterDefinition<T> condition = BuildConditions(uniqueFieldValue);
 
       var query = collection.Find(condition);
 
-      query = View.MakePagination(query, options);
-
-      query = query.Project<T>(View.BuildProjection<T>(options));
-
-      query.Sort(View.BuildSort(options));
+      if (options is { })
+      {
+        query = View.MakePagination(query, options);
+        query = query.Project<T>(View.BuildProjection<T>(options));
+        query.Sort(View.BuildSort(options));
+      }
 
       return await query.FirstOrDefaultAsync();
     }
 
-    public async Task<List<T>> Get(JsonElement condition)
-    {
-      FilterDefinition<T> filter = condition.ToString();
-      return await collection.Find(filter).ToListAsync();
-    }
-
-    public async Task<List<T>> Get(JsonElement condition, IDBViewOption options)
+    public async Task<List<T>> Get(JsonElement condition, IDBViewOption options = null)
     {
       FilterDefinition<T> filter = condition.ToString();
 
       var query = collection.Find(filter);
 
-      query = View.MakePagination(query, options);
-
-      query = query.Project<T>(View.BuildProjection<T>(options));
-
-      query.Sort(View.BuildSort(options));
+      if (options is { })
+      {
+        query = View.MakePagination(query, options);
+        query = query.Project<T>(View.BuildProjection<T>(options));
+        query.Sort(View.BuildSort(options));
+      }
 
       return await query.ToListAsync();
     }

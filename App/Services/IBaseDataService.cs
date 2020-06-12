@@ -9,10 +9,8 @@ namespace App.Services
   public interface IBaseDataService<T>
   {
     string uniqueFieldName { get; set; }
-    Task<T> Get(string uniqueField);
-    Task<T> Get(string uniqueField, IDBViewOption options);
-    Task<List<T>> Get(JsonElement condition);
-    Task<List<T>> Get(JsonElement condition, IDBViewOption options);
+    Task<T> Get(string uniqueField, IDBViewOption options = null);
+    Task<List<T>> Get(JsonElement condition, IDBViewOption options = null);
     Task<CUDMessage> Add(T newItem);
     Task<CUDMessage> Add(List<T> newItems);
     Task<CUDMessage> Update(string uniqueField, JsonElement token);
