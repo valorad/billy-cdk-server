@@ -51,64 +51,44 @@ namespace App.Controllers.Graphs
 
     public async Task<InstanceCUDMessage<CDKey>> ActivateCDKey(string playerDBName, string value)
     {
-      // check player existence
-      CDKey cdkey;
-      try
-      {
-        cdkey = await cdkeyService.Activate(playerDBName, value);
-        return new InstanceCUDMessage<CDKey>()
-        {
-          OK = true,
-          NumAffected = 1,
-          Message = $"Successfully activated CDKey with value = {value} for player with dbname = {playerDBName}",
-          Instance = cdkey,
-        };
-      }
-      catch (Exception e)
-      {
-        return new InstanceCUDMessage<CDKey>()
-        {
-          OK = false,
-          NumAffected = 0,
-          Message = $"Failed to activate CDKey with value = {value}: {e.Message}",
-          Instance = null,
-        };
-      }
+
+      return await cdkeyService.Activate(playerDBName, value);
+
     }
 
     public async Task<InstanceCUDMessage<CDKey>> ActivateCDKey(string playerDBName, List<string> values)
     {
 
-      // check if cdkey list is empty
-      if (values.Count <= 0) {
-        return new InstanceCUDMessage<CDKey>() {
-          OK = false,
-          NumAffected = 0,
-          Message = $"No CDKeys to activate since the input list is empty.",
-          Instance = null,
-        };
-      }
+      // // check if cdkey list is empty
+      // if (values.Count <= 0) {
+      //   return new InstanceCUDMessage<CDKey>() {
+      //     OK = false,
+      //     NumAffected = 0,
+      //     Message = $"No CDKeys to activate since the input list is empty.",
+      //     Instance = null,
+      //   };
+      // }
 
-      // check if player exist
-      Player player = await playerService.Get(playerDBName);
-      if (player is null) {
-        return new InstanceCUDMessage<CDKey>() {
-          OK = false,
-          NumAffected = 0,
-          Message = $"Failed to activate CDKey these cdkeys: Player {playerDBName} deos not exist.",
-          Instance = null,
-        };
-      }
+      // // check if player exist
+      // Player player = await playerService.Get(playerDBName);
+      // if (player is null) {
+      //   return new InstanceCUDMessage<CDKey>() {
+      //     OK = false,
+      //     NumAffected = 0,
+      //     Message = $"Failed to activate CDKey these cdkeys: Player {playerDBName} deos not exist.",
+      //     Instance = null,
+      //   };
+      // }
 
       // begin activate CDKeys
-      var cdkeys = await cdkeyService.Activate(playerDBName, values);
-      return new InstanceCUDMessage<CDKey>()
-      {
-        OK = true,
-        NumAffected = 1,
-        Message = $"Successfully activated specified cdkeys for player with dbname = {playerDBName}",
-        Instances = cdkeys,
-      };
+      return await cdkeyService.Activate(playerDBName, values);
+      // return new InstanceCUDMessage<CDKey>()
+      // {
+      //   OK = true,
+      //   NumAffected = 1,
+      //   Message = $"Successfully activated specified cdkeys for player with dbname = {playerDBName}",
+      //   Instances = cdkeys,
+      // };
 
     }
 
@@ -126,12 +106,6 @@ namespace App.Controllers.Graphs
     }
 
 
-  }
-
-  public class InstanceCUDMessage<T> : CUDMessage
-  {
-    public T Instance { get; set; }
-    public List<T> Instances { get; set; }
   }
 
   public partial class Query

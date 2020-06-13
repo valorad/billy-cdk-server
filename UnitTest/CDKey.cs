@@ -70,7 +70,8 @@ namespace UnitTest
 
       // Activate one cdk. Should be able to add, and player then has the game.
       // -> (player not null + appear in "games" field in player instance) We should get the cdk instance.
-      CDKey singleCDK = await cdkeyService.Activate(player.DBName, cdkeys[games[0].DBName][0]);
+      InstanceCUDMessage<CDKey> activateMessage = await cdkeyService.Activate(player.DBName, cdkeys[games[0].DBName][0]);
+      CDKey singleCDK = activateMessage.Instance;
       Assert.True(singleCDK.Player == player.DBName);
       Player playerInDB = await playerService.Get(player.DBName);
       Assert.NotNull(playerInDB.Games.Find(ele => ele == games[0].DBName));
@@ -80,60 +81,33 @@ namespace UnitTest
         cdkeys[games[1].DBName][0],
         cdkeys[games[2].DBName][0],
       };
-      List<CDKey> multipleCDKs = await cdkeyService.Activate(player.DBName, cdkValues);
+      activateMessage = await cdkeyService.Activate(player.DBName, cdkValues);
+      List<CDKey> multipleCDKs = activateMessage.Instances;
       Assert.True(multipleCDKs[1].Player == player.DBName);
       playerInDB = await playerService.Get(player.DBName);
       Assert.True(playerInDB.Games.Count == 1 + 2);
 
-      // Activate an invalid CDKey. Should receive an execption
-      bool isExecptionFired = false;
-      try
-      {
-        singleCDK = await cdkeyService.Activate(player.DBName, "2GDH1-5BDK2-BILLY-3CDK4"); // 风暴英雄CDK
-      }
-      catch (Exception e)
-      {
-        isExecptionFired = true;
-        Console.WriteLine(e);
-      }
-      Assert.True(isExecptionFired);
-      isExecptionFired = false;
+      // Activate an invalid CDKey. Message should not be okay.
+      activateMessage = await cdkeyService.Activate(player.DBName, "2GDH1-5BDK2-BILLY-3CDK4"); // 风暴英雄CDK
+      Console.WriteLine(activateMessage.Message);
+      Assert.False(activateMessage.OK);
       
-      // Activate duplicate keys. Should raise execptions because:
+      // Activate duplicate keys. Message should not be okay because:
       // 1. key already activated
-      try
-      {
-        // key already activated
-        singleCDK = await cdkeyService.Activate(player.DBName, cdkeys[games[0].DBName][0]);
-      }
-      catch (Exception e)
-      {
-        isExecptionFired = true;
-        Console.WriteLine(e);
-      }
 
-      Assert.True(isExecptionFired);
-      isExecptionFired = false;
+      activateMessage = await cdkeyService.Activate(player.DBName, cdkeys[games[0].DBName][0]);
+      Console.WriteLine(activateMessage.Message);
+      Assert.False(activateMessage.OK);
 
-      // 2. player already owns the game, activation should fail
-      try
-      {
-        // player already owns the game
-        singleCDK = await cdkeyService.Activate(player.DBName, cdkeys[games[1].DBName][1]);
-      }
-      catch (Exception e)
-      {
-        isExecptionFired = true;
-        Console.WriteLine(e);
-      }
-
-      Assert.True(isExecptionFired);
-      isExecptionFired = false;
-
-      CDKey cdkeyInDB = (await cdkeyService.Get(JsonDocument.Parse("{" + "\"value\": " + $"\"{cdkeys[games[1].DBName][1]}\"" + "}").RootElement))[0];
+      // 2. player already owns the game, activation should fail.
+      activateMessage = await cdkeyService.Activate(player.DBName, cdkeys[games[1].DBName][1]);
+      Console.WriteLine(activateMessage.Message);
+      Assert.False(activateMessage.OK);
+      CDKey cdkeyInDB = await cdkeyService.GetByValue(cdkeys[games[1].DBName][1]);
+      //(await cdkeyService.Get(JsonDocument.Parse("{" + "\"value\": " + $"\"{cdkeys[games[1].DBName][1]}\"" + "}").RootElement))[0];
       Assert.False(cdkeyInDB.IsActivated);
 
-      // Activate multiple keys contains duplications. No execptions should happen despite duplicated games / invalid keys
+      // Activate multiple keys contains duplications.
       // we should get a list of successfully added cdk instances,
       // and the games will only be added if player does not own those games
       cdkValues = new List<string> {
@@ -142,12 +116,14 @@ namespace UnitTest
         cdkeys[games[3].DBName][0], // good
       };
 
-      multipleCDKs = await cdkeyService.Activate(player.DBName, cdkValues);
+      activateMessage = await cdkeyService.Activate(player.DBName, cdkValues);
+      multipleCDKs = activateMessage.Instances;
       Assert.True(multipleCDKs.Count == 1);
 
       // check game[2] should not be activated
       // "player" field of unsuccessfully added cdkeys should remain null
-      cdkeyInDB = (await cdkeyService.Get(JsonDocument.Parse("{" + "\"value\": " + $"\"{cdkeys[games[2].DBName][1]}\"" + "}").RootElement))[0];
+      cdkeyInDB = await cdkeyService.GetByValue(cdkeys[games[2].DBName][1]);
+      // (await cdkeyService.Get(JsonDocument.Parse("{" + "\"value\": " + $"\"{cdkeys[games[2].DBName][1]}\"" + "}").RootElement))[0];
       Assert.False(cdkeyInDB.IsActivated);
       Assert.Null(cdkeyInDB.Player);
 

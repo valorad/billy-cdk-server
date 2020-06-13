@@ -66,28 +66,56 @@ namespace App.Services
       return cdKeys;
     }
 
-    public async Task<CDKey> Activate(string playerDBName, string value)
+    public async Task<InstanceCUDMessage<CDKey>> Activate(string playerDBName, string value)
     {
       Player player = await playerService.Get(playerDBName);
       if (player is null)
       {
-        throw new Exception($"Player {playerDBName} does not exist.");
+        return new InstanceCUDMessage<CDKey>() {
+          OK = false,
+          NumAffected = 0,
+          Message = $"Player {playerDBName} does not exist.",
+          Instance = null,
+        };
       }
       return await Activate(player, value);
     }
 
-    public async Task<CDKey> Activate(Player player, string value)
+    public async Task<InstanceCUDMessage<CDKey>> Activate(string playerDBName, List<string> values)
+    {
+      Player player = await playerService.Get(playerDBName);
+      if (player is null)
+      {
+        return new InstanceCUDMessage<CDKey>() {
+          OK = false,
+          NumAffected = 0,
+          Message = $"Player {playerDBName} does not exist.",
+          Instance = null,
+        };
+      }
+      return await Activate(player, values);
+    }
+
+    public async Task<InstanceCUDMessage<CDKey>> Activate(Player player, string value)
     {
       CDKey cdkey = await GetByValue(value);
+      var activateMessage = new InstanceCUDMessage<CDKey>() {
+        OK = false,
+        NumAffected = 0,
+        Instance = null,
+      };
+
       if (cdkey is null)
       {
-        throw new Exception($"Unable to find CDKey {value}.");
+        activateMessage.Message = $"CDKey {value} does not exist.";
+        return activateMessage;
       }
 
       // check if cdk already activated + if player already owns the game
       if (cdkey.IsActivated ?? false)
       {
-        throw new Exception($"cdkey {value} has already been activated by {cdkey.Player}.");
+        activateMessage.Message = $"CDKey {value} has already been activated by {cdkey.Player}.";
+        return activateMessage;
       }
 
       // Player player = await playerService.Get(playerName);
@@ -95,7 +123,8 @@ namespace App.Services
 
       if (IsTheGameOwned)
       {
-        throw new Exception($"{player.DBName} already owns {cdkey.Game}.");
+        activateMessage.Message = $"{player.DBName} already owns {cdkey.Game}.";
+        return activateMessage;
       }
 
       // update CDKey isActivated field
@@ -103,12 +132,15 @@ namespace App.Services
 
       if (!cdkUpdateResult.OK)
       {
-        throw new Exception($"Failed to update CDKey {value}.");
+        Console.WriteLine(cdkUpdateResult.Message);
+        activateMessage.Message = $"Failed to update CDKey {value}. See logs for details.";
+        return activateMessage;
       }
 
       if (cdkUpdateResult.NumAffected <= 0)
       {
-        throw new Exception($"Invalid CDKey {value} provided.");
+        activateMessage.Message = $"Failed to update CDKey {value}: Invalid CDKey {value} provided.";
+        return activateMessage;
       }
 
       // mark the player who activates cdkey
@@ -118,20 +150,41 @@ namespace App.Services
       CUDMessage playerUpdateResult = await playerService.AddGame(player, cdkey.Game);
       if (!playerUpdateResult.OK)
       {
-        throw new Exception($"Failed to add {cdkey.Game} to {player.DBName}.");
+        activateMessage.Message = $"Failed to add {cdkey.Game} to {player.DBName}.";
+        return activateMessage;
       }
 
       // return this cdkey
+
       cdkey = await Get(cdkey.ID);
-      return cdkey;
+
+      if (cdkey is null) {
+        activateMessage.Message = $"Failed to retrieve CDKey {cdkey.ID}.";
+        return activateMessage;
+      }
+
+      activateMessage.Instance = cdkey;
+      activateMessage.Message = $"Successfully activated CDKey with Value = {cdkey.Value} for Player {player.DBName}.";
+
+      return activateMessage;
     }
 
-    public async Task<List<CDKey>> Activate(string playerName, List<string> values)
+    public async Task<InstanceCUDMessage<CDKey>> Activate(Player player, List<string> values)
     {
 
-      List<CDKey> validCDKeys = await GetByValue(values);
+      int input = values.Count;
 
-      Player player = await playerService.Get(playerName);
+      // check if cdkey list is empty
+      if (input <= 0) {
+        return new InstanceCUDMessage<CDKey>() {
+          OK = false,
+          NumAffected = 0,
+          Message = $"No CDKeys to activate since the input list is empty.",
+          Instances = null,
+        };
+      }
+
+      List<CDKey> validCDKeys = await GetByValue(values);
 
       // check if cdk already activated + if player already owns the game
       validCDKeys = (
@@ -149,7 +202,7 @@ namespace App.Services
         CUDMessage cdkUpdateResult = await UpdateIsActivated(validCDKey.Value, true);
         if (cdkUpdateResult.OK && (cdkUpdateResult.NumAffected > 0))
         {
-          cdkUpdateResult = await UpdatePlayer(validCDKey.Value, playerName);
+          cdkUpdateResult = await UpdatePlayer(validCDKey.Value, player.DBName);
           successfullyActivatedCDKeys.Add(validCDKey);
         }
       }
@@ -157,14 +210,14 @@ namespace App.Services
       // mark the player who activates cdkey
       foreach (var successfullyActivatedCDKey in successfullyActivatedCDKeys)
       {
-        await UpdatePlayer(successfullyActivatedCDKey.Value, playerName);
+        await UpdatePlayer(successfullyActivatedCDKey.Value, player.DBName);
       }
 
       // add the game to player
       var successfullyAddedCDKeys = new List<CDKey>() { };
       foreach (var cdKey in successfullyActivatedCDKeys)
       {
-        CUDMessage playerUpdateResult = await playerService.AddGame(playerName, cdKey.Game);
+        CUDMessage playerUpdateResult = await playerService.AddGame(player.DBName, cdKey.Game);
         if (playerUpdateResult.OK)
         {
           successfullyAddedCDKeys.Add(cdKey);
@@ -177,8 +230,24 @@ namespace App.Services
       {
         dbUpdatedCDkeys.Add(await Get(cdKey.ID));
       }
-      return dbUpdatedCDkeys;
+
+      if (dbUpdatedCDkeys.Count <= 0) {
+        return new InstanceCUDMessage<CDKey>() {
+          OK = false,
+          NumAffected = 0,
+          Message = $"No CDKeys to activate because non of these inputs are valid. Try activate them one by one if you are not sure why.",
+          Instances = null,
+        };
+      }
+
+      return new InstanceCUDMessage<CDKey>() {
+        OK = true,
+        NumAffected = dbUpdatedCDkeys.Count,
+        Message = $"Activate CDKeys for Player with dbname = {player.DBName}: {dbUpdatedCDkeys.Count} success, {input - dbUpdatedCDkeys.Count} failure.",
+        Instances = dbUpdatedCDkeys,
+      };
     }
+    
 
     public async Task<CUDMessage> ActivateByDBID(string id)
     {
