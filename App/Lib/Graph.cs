@@ -9,7 +9,7 @@ namespace App.Lib
   {
     public static string LoadDefinitions()
     {
-      string filePath = Path.GetFullPath(@"Models\Graphs\");
+      string filePath = Path.GetFullPath(Path.Combine(".", "Models", "Graphs"));
       var extensions = new List<string>() { ".graphql", ".gql" };
 
       List<string> files = Directory.GetFiles(filePath)
