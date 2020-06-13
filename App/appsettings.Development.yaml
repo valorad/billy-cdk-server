@@ -4,3 +4,8 @@
       Default: Information
       Microsoft: Warning
       Microsoft.Hosting.Lifetime: Information
+  AllowedHosts: "*"
+  # Kestrel:
+  #   Endpoints:
+  #     Http:
+  #       Url: http://localhost:12345
