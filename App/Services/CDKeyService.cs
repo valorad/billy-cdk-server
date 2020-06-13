@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -65,27 +66,36 @@ namespace App.Services
       return cdKeys;
     }
 
-    public async Task<CDKey> Activate(string playerName, string value)
+    public async Task<CDKey> Activate(string playerDBName, string value)
     {
+      Player player = await playerService.Get(playerDBName);
+      if (player is null)
+      {
+        throw new Exception($"Player {playerDBName} does not exist.");
+      }
+      return await Activate(player, value);
+    }
 
+    public async Task<CDKey> Activate(Player player, string value)
+    {
       CDKey cdkey = await GetByValue(value);
       if (cdkey is null)
       {
-        throw new System.Exception($"Unable to find CDKey {value}.");
+        throw new Exception($"Unable to find CDKey {value}.");
       }
 
       // check if cdk already activated + if player already owns the game
       if (cdkey.IsActivated ?? false)
       {
-        throw new System.Exception($"cdkey {value} has already been activated by {cdkey.Player}.");
+        throw new Exception($"cdkey {value} has already been activated by {cdkey.Player}.");
       }
 
-      Player player = await playerService.Get(playerName);
+      // Player player = await playerService.Get(playerName);
       bool IsTheGameOwned = player.Games.Exists(ele => ele == cdkey.Game);
 
       if (IsTheGameOwned)
       {
-        throw new System.Exception($"{cdkey.Player} already owns {cdkey.Game}.");
+        throw new Exception($"{player.DBName} already owns {cdkey.Game}.");
       }
 
       // update CDKey isActivated field
@@ -93,24 +103,22 @@ namespace App.Services
 
       if (!cdkUpdateResult.OK)
       {
-        throw new System.Exception($"Failed to update CDKey {value}.");
+        throw new Exception($"Failed to update CDKey {value}.");
       }
 
       if (cdkUpdateResult.NumAffected <= 0)
       {
-        throw new System.Exception($"Invalid CDKey {value} provided.");
+        throw new Exception($"Invalid CDKey {value} provided.");
       }
 
       // mark the player who activates cdkey
-      cdkUpdateResult = await UpdatePlayer(value, playerName);
+      cdkUpdateResult = await UpdatePlayer(value, player.DBName);
 
       // add the game to player
-
-      CUDMessage playerUpdateResult = await playerService.AddGame(playerName, cdkey.Game);
-
+      CUDMessage playerUpdateResult = await playerService.AddGame(player, cdkey.Game);
       if (!playerUpdateResult.OK)
       {
-        throw new System.Exception($"Failed to add {cdkey.Game} to {playerName}.");
+        throw new Exception($"Failed to add {cdkey.Game} to {player.DBName}.");
       }
 
       // return this cdkey

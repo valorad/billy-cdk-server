@@ -21,4 +21,7 @@ type Mutation {
   updateCDKeys(condition: String!, token: String!): CUDMessage
   deleteCDKey(id: ID!): CUDMessage
   deleteCDKeys(condition: String!): CUDMessage
+  activateCDKey(playerDBName: String!, value: String!): CDKeyCUDMessage
+  activateCDKeys(playerDBName: String!, values: [String]!): CDKeyCUDMessage
+
 }

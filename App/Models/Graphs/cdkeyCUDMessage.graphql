@@ -1,0 +1,6 @@
+type CDKeyCUDMessage {
+  ok: Boolean
+  numAffected: Int
+  message: String
+  instance: CDKey
+}

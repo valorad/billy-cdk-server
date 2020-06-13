@@ -27,8 +27,11 @@ namespace App.Controllers.Graphs
 
     public async Task<T> GetSingle(string defaultFieldValue, string options)
     {
-      JsonElement optionsInJson = JsonDocument.Parse(options).RootElement;
-      var viewOptions = optionsInJson.JSONToObject<DBViewOption>();
+      DBViewOption viewOptions = null;
+      if (options is {}) {
+        JsonElement optionsInJson = JsonDocument.Parse(options).RootElement;
+        viewOptions = optionsInJson.JSONToObject<DBViewOption>();
+      }
       return await baseDataService.Get(defaultFieldValue, viewOptions);
     }
 
@@ -46,8 +49,12 @@ namespace App.Controllers.Graphs
         conditionInJson = JsonDocument.Parse(condition).RootElement;
       }
 
-      JsonElement optionsInJson = JsonDocument.Parse(options).RootElement;
-      var viewOptions = optionsInJson.JSONToObject<DBViewOption>();
+      DBViewOption viewOptions = null;
+      if (options is {}) {
+        JsonElement optionsInJson = JsonDocument.Parse(options).RootElement;
+        viewOptions = optionsInJson.JSONToObject<DBViewOption>();
+      }
+
       return await baseDataService.Get(conditionInJson, viewOptions);
       
     }
