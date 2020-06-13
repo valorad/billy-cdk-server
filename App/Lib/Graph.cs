@@ -23,7 +23,7 @@ namespace App.Lib
         typeDefs += File.ReadAllText(file);
       }
 
-      Console.WriteLine(typeDefs);
+      // Console.WriteLine(typeDefs);
 
       return typeDefs;
     }
