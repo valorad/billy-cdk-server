@@ -5,7 +5,10 @@
       Microsoft: Warning
       Microsoft.Hosting.Lifetime: Information
   AllowedHosts: "*"
-  # Kestrel:
-  #   Endpoints:
-  #     Http:
-  #       Url: http://localhost:12345
+  basePath: "/"
+  Kestrel:
+    Endpoints:
+      Http:
+        Url: http://0.0.0.0:5000
+      HttpsInlineCertFile:
+        Url: https://0.0.0.0:5001
