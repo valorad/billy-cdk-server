@@ -1,8 +1,14 @@
 type Game {
   id: ID
   dbname: String
+  name: String
+  description: String
+  price: Float
 }
 
 input GameView {
   dbname: String!
+  name: String
+  description: String
+  price: Float
 }

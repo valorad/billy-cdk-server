@@ -10,8 +10,16 @@ namespace App.Models
     public string ID { get; set; }
 
     [BsonElement("dbname")]
-    [BsonRequired]
     public string DBName { get; set; }
+
+    [BsonElement("name")]
+    public string Name { get; set; }
+
+    [BsonElement("description")]
+    public string Description { get; set; }
+
+    [BsonElement("price")]
+    public double Price { get; set; }
   }
 
 }
