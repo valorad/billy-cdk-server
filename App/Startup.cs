@@ -62,7 +62,8 @@ namespace App
       services.AddSingleton<Mutation>();
       services.AddSingleton<JsonGraphType>();
       services.AddSingleton<ISchema>(
-        (provider) => {
+        (provider) =>
+        {
           var schema = Schema.For(Graph.LoadDefinitions(), _ =>
             {
               _.Types.Include<Query>();
@@ -76,6 +77,17 @@ namespace App
 
 
       );
+
+      services.AddCors(options =>
+      {
+        options.AddPolicy("policy0", builder =>
+        {
+          builder.AllowAnyHeader()
+                    .WithMethods("GET", "POST")
+                    .WithOrigins("*")
+                    .SetIsOriginAllowedToAllowWildcardSubdomains();;
+        });
+      });
 
       services
           .AddGraphQL((services, options) =>
@@ -97,16 +109,19 @@ namespace App
 
       string basePath = Configuration.GetSection("basePath").Value;
 
-      if (basePath is null) {
+      if (basePath is null)
+      {
         basePath = "/";
       }
-      
+
       app.UsePathBase(basePath);
 
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
       }
+
+      app.UseCors("policy0");
 
       app.UseHttpsRedirection();
 
