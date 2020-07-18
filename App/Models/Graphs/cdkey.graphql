@@ -13,7 +13,7 @@ input CDKeyView {
   game: String!
   value: String!
   isActivated: Boolean!
-  price: Float!
+  price: Float
   platform: String!
 }
 
