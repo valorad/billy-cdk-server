@@ -90,15 +90,15 @@ namespace App
       });
 
       services
-          .AddGraphQL((services, options) =>
-          {
+        .AddGraphQL((options, provider) =>
+        {
             options.EnableMetrics = false;
             options.ExposeExceptions = true;
-            var logger = services.GetRequiredService<ILogger<Startup>>();
+            var logger = provider.GetRequiredService<ILogger<Startup>>();
             options.UnhandledExceptionDelegate = ctx => logger.LogError("{Error} occured", ctx.OriginalException.Message);
-          })
-      .AddSystemTextJson(deserializerSettings => { }, serializerSettings => { })
-      .AddDataLoader();
+        })
+        .AddSystemTextJson(deserializerSettings => { }, serializerSettings => { })
+        .AddDataLoader();
 
       services.AddControllers();
     }
