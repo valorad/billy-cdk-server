@@ -125,6 +125,8 @@ namespace App
 
       app.UseHttpsRedirection();
 
+      app.UseFileServer();
+
       app.UseRouting();
 
       app.UseAuthorization();
