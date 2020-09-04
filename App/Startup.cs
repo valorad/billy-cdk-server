@@ -20,6 +20,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using App.Lib;
 using GraphQL;
+using Microsoft.AspNetCore.HttpOverrides;
+using System.Net;
 
 namespace App
 {
@@ -35,6 +37,11 @@ namespace App
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+
+      services.Configure<ForwardedHeadersOptions>(options =>
+      {
+          options.KnownProxies.Add(IPAddress.Parse("0.0.0.0"));
+      });
 
       // add secrets
       services.Configure<DBConfig>(
@@ -107,6 +114,11 @@ namespace App
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
 
+      app.UseForwardedHeaders(new ForwardedHeadersOptions
+      {
+          ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+      });
+
       string basePath = Configuration.GetSection("basePath").Value;
 
       if (basePath is null)
@@ -123,7 +135,7 @@ namespace App
 
       app.UseCors("policy0");
 
-      app.UseHttpsRedirection();
+      // app.UseHttpsRedirection();
 
       app.UseFileServer();
 
