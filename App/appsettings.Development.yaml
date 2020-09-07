@@ -5,7 +5,7 @@
       Microsoft: Warning
       Microsoft.Hosting.Lifetime: Information
   AllowedHosts: "*"
-  basePath: "/"
+  basePath: "/billyCDK"
   Kestrel:
     Endpoints:
       Http:

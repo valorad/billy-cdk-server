@@ -20,6 +20,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using App.Lib;
 using GraphQL;
+using Microsoft.AspNetCore.HttpOverrides;
+using System.Net;
 
 namespace App
 {
@@ -35,6 +37,11 @@ namespace App
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+
+      services.Configure<ForwardedHeadersOptions>(options =>
+      {
+          options.KnownProxies.Add(IPAddress.Parse("0.0.0.0"));
+      });
 
       // add secrets
       services.Configure<DBConfig>(
@@ -62,7 +69,8 @@ namespace App
       services.AddSingleton<Mutation>();
       services.AddSingleton<JsonGraphType>();
       services.AddSingleton<ISchema>(
-        (provider) => {
+        (provider) =>
+        {
           var schema = Schema.For(Graph.LoadDefinitions(), _ =>
             {
               _.Types.Include<Query>();
@@ -77,16 +85,27 @@ namespace App
 
       );
 
+      services.AddCors(options =>
+      {
+        options.AddPolicy("policy0", builder =>
+        {
+          builder.AllowAnyHeader()
+                    .WithMethods("GET", "POST")
+                    .WithOrigins("*")
+                    .SetIsOriginAllowedToAllowWildcardSubdomains();;
+        });
+      });
+
       services
-          .AddGraphQL((services, options) =>
-          {
+        .AddGraphQL((options, provider) =>
+        {
             options.EnableMetrics = false;
             options.ExposeExceptions = true;
-            var logger = services.GetRequiredService<ILogger<Startup>>();
+            var logger = provider.GetRequiredService<ILogger<Startup>>();
             options.UnhandledExceptionDelegate = ctx => logger.LogError("{Error} occured", ctx.OriginalException.Message);
-          })
-      .AddSystemTextJson(deserializerSettings => { }, serializerSettings => { })
-      .AddDataLoader();
+        })
+        .AddSystemTextJson(deserializerSettings => { }, serializerSettings => { })
+        .AddDataLoader();
 
       services.AddControllers();
     }
@@ -95,12 +114,18 @@ namespace App
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
 
+      app.UseForwardedHeaders(new ForwardedHeadersOptions
+      {
+          ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+      });
+
       string basePath = Configuration.GetSection("basePath").Value;
 
-      if (basePath is null) {
+      if (basePath is null)
+      {
         basePath = "/";
       }
-      
+
       app.UsePathBase(basePath);
 
       if (env.IsDevelopment())
@@ -108,7 +133,11 @@ namespace App
         app.UseDeveloperExceptionPage();
       }
 
-      app.UseHttpsRedirection();
+      app.UseCors("policy0");
+
+      // app.UseHttpsRedirection();
+
+      app.UseFileServer();
 
       app.UseRouting();
 

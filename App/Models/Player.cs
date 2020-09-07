@@ -13,6 +13,12 @@ namespace App.Models
     [BsonElement("dbname")]
     public string DBName { get; set; }
 
+    [BsonElement("name")]
+    public string Name { get; set; }
+
+    [BsonElement("bio")]
+    public string Bio { get; set; }
+
     [BsonElement("isPremium")]
     public bool? IsPremium { get; set; }
 

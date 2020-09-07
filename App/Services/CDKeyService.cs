@@ -163,6 +163,8 @@ namespace App.Services
         return activateMessage;
       }
 
+      activateMessage.OK = true;
+      activateMessage.NumAffected = 1;
       activateMessage.Instance = cdkey;
       activateMessage.Message = $"Successfully activated CDKey with Value = {cdkey.Value} for Player {player.DBName}.";
 
