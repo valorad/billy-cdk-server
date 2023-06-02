@@ -28,10 +28,9 @@ builder.Services.AddSingleton<ISchema>((provider) =>
 
 builder.Services.AddGraphQL(gqlBuilder =>
     gqlBuilder
-        .AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = true)
+        .AddErrorInfoProvider(opt => opt.ExposeExceptionDetails = true)
         .AddSystemTextJson()
 );
-
 
 var app = builder.Build();
 
@@ -53,6 +52,7 @@ app.MapGet("/api", () =>
 {
     return new InstanceMessage<object>(
         Okay: 1,
+        NumAffected: 0,
         Message: "API Works!",
         Instances: null
     );
