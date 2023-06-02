@@ -1,0 +1,17 @@
+type Player {
+  id: ID
+  dbname: String
+  name: String
+  bio: String
+  isPremium: Boolean
+  games: [String]
+}
+
+input PlayerView {
+  dbname: String!
+  name: String
+  bio: String
+  isPremium: Boolean!
+  games: [String]
+}
+
