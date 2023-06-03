@@ -1,22 +1,26 @@
 using BillyCDK.App.Models;
-
+using BillyCDK.App.Utilities;
+using MongoDB.Driver;
 
 namespace BillyCDK.App.Services;
 
-public class PlayerService
+public class PlayerService : AbstractDataService<Player>
 {
-    public Task<List<Player>> Get()
+    protected override IMongoCollection<Player> Collection { get; set; }
+    protected override string EntityName { get; set; } = "player";
+
+    public PlayerService(
+        IDBCollection collection
+    )
     {
-        return Task.FromResult( new List<Player>()
-        {
-            new Player(
-                ID: "abc",
-                DBName: "abc",
-                Name: "abc",
-                Bio: "abc",
-                IsPremium: false,
-                Games: new List<string> { "www" }
-            ),
-        });
+        Collection = collection.Players;
     }
+
+    public async Task<InstanceMessage<Player>> AddGame(string playerDBName, List<string> games)
+            => await AddItemsToList(
+                "games",
+                games,
+                DBUtils.BuildSingleQueryCondition<Player>("dbname", playerDBName)
+            );
+
 }

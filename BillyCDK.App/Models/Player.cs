@@ -11,6 +11,12 @@ public record Player(
     [property: BsonElement("dbname")]
     string DBName,
 
+    [property:BsonElement("updatedDate")]
+    DateTime UpdatedDate,
+
+    [property:BsonElement("deletedDate")]
+    DateTime? DeletedDate,
+
     [property: BsonElement("name")]
     string Name,
 

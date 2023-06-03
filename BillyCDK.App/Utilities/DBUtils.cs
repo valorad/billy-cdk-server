@@ -48,6 +48,21 @@ public class DBUtils
         return "{}";
     }
 
+    public static FilterDefinition<T> BuildSingleQueryCondition<T>(string indexFieldName, string indexFieldValue)
+    {
+
+        FilterDefinition<T> condition;
+        if (indexFieldName == "_id")
+        {
+            condition = Builders<T>.Filter.Eq(indexFieldName, ObjectId.Parse(indexFieldValue));
+        }
+        else
+        {
+            condition = Builders<T>.Filter.Eq(indexFieldName, indexFieldValue);
+        }
+        return condition;
+    }
+
     public static void AddFilterToPipeline(IList<BsonDocument> pipelineStages, string conditionLiteral)
     {
         pipelineStages.Add(BsonDocument.Parse(JsonUtils.CreateCompactLiteral($@"{{

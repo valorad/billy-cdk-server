@@ -1,5 +1,6 @@
 ﻿using BillyCDK.App.Models;
 using BillyCDK.App.Utilities;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace BillyCDK.App.Services;
@@ -64,6 +65,7 @@ public abstract class AbstractDataService<T>
     {
         try
         {
+            token.Set("updatedDate", DateTime.Now);
             UpdateResult result = await Collection.UpdateManyAsync(condition, token);
             List<T> updatedEntities = await Get(
                 condition,
@@ -137,6 +139,50 @@ public abstract class AbstractDataService<T>
             );
         }
 
+    }
+
+    public async Task<InstanceMessage<T>> AddItemsToList(string listFieldName, IEnumerable<string> newValues, FilterDefinition<T> targetCondition)
+    {
+        string quotedValues = newValues.ToMarkedString();
+
+        UpdateDefinition<T> updateToken = JsonUtils.CreateCompactLiteral($@"{{
+            ""$push"": {{
+                ""{listFieldName}"": {{
+                    ""$each"": [ {quotedValues} ]
+                }}
+            }}
+        }}");
+        InstanceMessage<T> updateMessage = await Update(targetCondition, updateToken);
+        if (updateMessage.Okay == 1)
+        {
+            updateMessage = updateMessage with {
+                Message = $"Added to list {listFieldName}: x{newValues.Count()}.\n{updateMessage.Message}"
+            };
+        }
+        return updateMessage;
+    }
+
+    public async Task<InstanceMessage<T>> RemoveItemsFromList(string listFieldName, IEnumerable<string> removingValues, FilterDefinition<T> targetCondition)
+    {
+        var quotedValues = removingValues.ToMarkedString();
+
+        UpdateDefinition<T> updateToken = JsonUtils.CreateCompactLiteral($@"{{
+            ""$pull"": {{
+                ""{listFieldName}"": {{
+                    ""$in"": [ {quotedValues} ]
+                }}
+            }}
+        }}");
+
+        InstanceMessage<T> updateMessage = await Update(targetCondition, updateToken);
+        if (updateMessage.Okay == 1)
+        {
+            updateMessage = updateMessage with
+            {
+                Message = $"Removed from list {listFieldName}: x{removingValues.Count()}.\n{updateMessage.Message}"
+            };
+        }
+        return updateMessage;
     }
 
 }
