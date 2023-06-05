@@ -358,3 +358,4 @@ secrets.yaml
 !.vscode/tasks.json
 
 **/wwwroot/**
+appsettings.[Pp]roduction.json

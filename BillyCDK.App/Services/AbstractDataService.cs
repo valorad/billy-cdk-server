@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace BillyCDK.App.Services;
 
-public abstract class AbstractDataService<T>
+public abstract class AbstractDataService<T> : IAbstractDataService<T>
 {
     protected abstract IMongoCollection<T> Collection { get; set; }
     protected abstract string EntityName { get; set; }
@@ -103,7 +103,7 @@ public abstract class AbstractDataService<T>
         condition,
         Builders<T>.Update.Set("deletedDate", DateTime.Now)
     );
-    
+
 
     public async Task<InstanceMessage<T>> Drop(FilterDefinition<T> condition)
     {
@@ -155,7 +155,8 @@ public abstract class AbstractDataService<T>
         InstanceMessage<T> updateMessage = await Update(targetCondition, updateToken);
         if (updateMessage.Okay == 1)
         {
-            updateMessage = updateMessage with {
+            updateMessage = updateMessage with
+            {
                 Message = $"Added to list {listFieldName}: x{newValues.Count()}.\n{updateMessage.Message}"
             };
         }

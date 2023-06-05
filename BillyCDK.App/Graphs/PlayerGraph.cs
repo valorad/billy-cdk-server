@@ -15,8 +15,9 @@ public partial class Query
     [GraphQLMetadata("players")]
     public async Task<List<Player>> GetPlayers()
     {
-        PlayerService svc = new();
-        return await svc.Get();
+        //PlayerService svc = new();
+        //return await svc.Get();
+        throw new NotImplementedException();
     }
 
 }

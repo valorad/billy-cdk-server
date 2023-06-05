@@ -1,6 +1,6 @@
 using MongoDB.Driver;
 
-namespace BillyCDK.App.Database
+namespace BillyCDK.App.Models
 {
   public interface IDBContext
   {

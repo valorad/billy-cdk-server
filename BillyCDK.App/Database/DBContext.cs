@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using BillyCDK.App.Models;
+using MongoDB.Driver;
 
 namespace BillyCDK.App.Database;
 

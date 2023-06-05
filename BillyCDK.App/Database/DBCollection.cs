@@ -11,7 +11,7 @@ namespace BillyCDK.App.Database
     public DBCollection(IDBContext context)
     {
       this.context = context;
-      this.dbInstance = context.DBInstance;
+      dbInstance = context.DBInstance;
     }
 
     public IMongoCollection<Player> Players => dbInstance.GetCollection<Player>("players");

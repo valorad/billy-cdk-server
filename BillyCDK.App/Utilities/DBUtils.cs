@@ -42,7 +42,7 @@ public class DBUtils
         if (options.OrderBy is { })
         {
             return JsonUtils.CreateCompactLiteral($@"{{
-                {options.OrderBy}: {(options.Order == "desc" ? -1 : 1)}
+                ""{options.OrderBy}"": {(options.Order == "desc" ? -1 : 1)}
             }}");
         }
         return "{}";
