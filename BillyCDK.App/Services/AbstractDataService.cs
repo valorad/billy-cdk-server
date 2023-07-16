@@ -10,7 +10,7 @@ public abstract class AbstractDataService<T> : IAbstractDataService<T>
     protected abstract IMongoCollection<T> Collection { get; set; }
     protected abstract string EntityName { get; set; }
 
-    public async Task<List<T>> Get(FilterDefinition<T> condition, IDBViewOption? options = null)
+    public async Task<IList<T>> Get(FilterDefinition<T> condition, IDBViewOption? options = null)
     {
         var query = Collection.Find(condition);
 
@@ -31,7 +31,7 @@ public abstract class AbstractDataService<T> : IAbstractDataService<T>
         {
             await Collection.InsertManyAsync(newItems);
 
-            List<T> insertedEntities = await Get(
+            IList<T> insertedEntities = await Get(
                 "{}",
                 new DBViewOption(
                     Includes: new List<string> { "_id", "dbname" },
@@ -67,7 +67,7 @@ public abstract class AbstractDataService<T> : IAbstractDataService<T>
         {
             token.Set("updatedDate", DateTime.Now);
             UpdateResult result = await Collection.UpdateManyAsync(condition, token);
-            List<T> updatedEntities = await Get(
+            IList<T> updatedEntities = await Get(
                 condition,
                 new DBViewOption(
                     Includes: new List<string> { "_id", "dbname" },
@@ -109,7 +109,7 @@ public abstract class AbstractDataService<T> : IAbstractDataService<T>
     {
         try
         {
-            List<T> droppingEntities = await Get(
+            IList<T> droppingEntities = await Get(
                 condition,
                 new DBViewOption(
                     Includes: new List<string> { "_id", "dbname" },

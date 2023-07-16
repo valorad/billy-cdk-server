@@ -37,7 +37,7 @@ public class PlayerTest : IClassFixture<ServiceFixture>, IDisposable
         // Add many
         InstanceMessage<Player> addMessage = await playerService.AddPlayers(newPlayers);
         Assert.Equal(1, addMessage.Okay);
-        List<Player> playersInDB = await playerService.Get(JsonDocument.Parse("{}").RootElement.ToString());
+        IList<Player> playersInDB = await playerService.Get(JsonDocument.Parse("{}").RootElement.ToString());
         Assert.True(playersInDB.Count == 3);
         // update many
         InstanceMessage<Player> updateMessage = await playerService.Update(updateCondition.ToString(), updateToken.ToString());

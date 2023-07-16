@@ -19,4 +19,5 @@ public static class EnumerableExtension
         );
         return string.Join(separator, quotedNames);
     }
+
 }

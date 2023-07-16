@@ -29,6 +29,8 @@ public class ServiceFixture
 
                 // add services
                 services.AddSingleton<IPlayerService, PlayerService>();
+                services.AddSingleton<IGameService, GameService>();
+                services.AddSingleton<ICDKeyService, CDKeyService>();
             })
             .Build();
     }
