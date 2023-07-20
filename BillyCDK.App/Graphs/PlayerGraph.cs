@@ -1,5 +1,5 @@
-﻿using BillyCDK.App.Models;
-using BillyCDK.App.Services;
+﻿using BillyCDK.DataAccess.Models;
+using BillyCDK.DataAccess.Services;
 using GraphQL;
 
 namespace BillyCDK.App.Graphs;

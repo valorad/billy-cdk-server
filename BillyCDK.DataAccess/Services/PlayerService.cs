@@ -1,9 +1,9 @@
-using BillyCDK.App.Models;
-using BillyCDK.App.Utilities;
+using BillyCDK.DataAccess.Models;
+using BillyCDK.DataAccess.Utilities;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace BillyCDK.App.Services;
+namespace BillyCDK.DataAccess.Services;
 
 public class PlayerService : AbstractDataService<Player>, IPlayerService
 {

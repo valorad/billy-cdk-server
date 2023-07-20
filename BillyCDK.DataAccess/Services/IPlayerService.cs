@@ -1,6 +1,6 @@
-﻿using BillyCDK.App.Models;
+﻿using BillyCDK.DataAccess.Models;
 
-namespace BillyCDK.App.Services;
+namespace BillyCDK.DataAccess.Services;
 
 public interface IPlayerService : IAbstractDataService<Player>
 {

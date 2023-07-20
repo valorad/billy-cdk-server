@@ -1,7 +1,7 @@
-﻿using BillyCDK.App.Models;
+﻿using BillyCDK.DataAccess.Models;
 using MongoDB.Driver;
 
-namespace BillyCDK.App.Services;
+namespace BillyCDK.DataAccess.Services;
 public interface IAbstractDataService<T>
 {
     Task<InstanceMessage<T>> Add(IList<T> newItems);

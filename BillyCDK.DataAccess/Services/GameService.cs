@@ -1,8 +1,8 @@
-using BillyCDK.App.Models;
+using BillyCDK.DataAccess.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace BillyCDK.App.Services;
+namespace BillyCDK.DataAccess.Services;
 
 public class GameService : AbstractDataService<Game>, IGameService
 {

@@ -1,6 +1,6 @@
 using MongoDB.Driver;
 
-namespace BillyCDK.App.Models;
+namespace BillyCDK.DataAccess.Models;
 
 public interface IDBCollection
 {

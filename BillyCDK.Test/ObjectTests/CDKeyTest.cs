@@ -1,6 +1,6 @@
-using BillyCDK.App.Models;
-using BillyCDK.App.Services;
-using BillyCDK.App.Utilities;
+using BillyCDK.DataAccess.Models;
+using BillyCDK.DataAccess.Services;
+using BillyCDK.DataAccess.Utilities;
 using BillyCDK.Test.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

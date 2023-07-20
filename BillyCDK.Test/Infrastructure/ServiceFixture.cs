@@ -1,6 +1,6 @@
-﻿using BillyCDK.App.Database;
-using BillyCDK.App.Models;
-using BillyCDK.App.Services;
+﻿using BillyCDK.DataAccess.Database;
+using BillyCDK.DataAccess.Models;
+using BillyCDK.DataAccess.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

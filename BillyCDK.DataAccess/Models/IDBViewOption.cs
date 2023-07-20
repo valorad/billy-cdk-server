@@ -1,4 +1,4 @@
-namespace BillyCDK.App.Models;
+namespace BillyCDK.DataAccess.Models;
 
 
 public interface IProjectionOption

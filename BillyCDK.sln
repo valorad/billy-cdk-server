@@ -9,7 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BillyCDK.App", "BillyCDK.App\BillyCDK.App.csproj", "{5C42AD2C-F466-448C-AD6A-4B85FFD59C2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BillyCDK.Test", "BillyCDK.Test\BillyCDK.Test.csproj", "{43C13494-94A0-4B7B-9188-3ADC109BA6CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BillyCDK.Test", "BillyCDK.Test\BillyCDK.Test.csproj", "{43C13494-94A0-4B7B-9188-3ADC109BA6CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BillyCDK.DataAccess", "BillyCDK.DataAccess\BillyCDK.DataAccess.csproj", "{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{03DC8160-7AFC-4B12-96EA-FF59AB7EC95A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +76,18 @@ Global
 		{43C13494-94A0-4B7B-9188-3ADC109BA6CF}.Release|x64.Build.0 = Release|Any CPU
 		{43C13494-94A0-4B7B-9188-3ADC109BA6CF}.Release|x86.ActiveCfg = Release|Any CPU
 		{43C13494-94A0-4B7B-9188-3ADC109BA6CF}.Release|x86.Build.0 = Release|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Debug|x64.Build.0 = Debug|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Debug|x86.Build.0 = Debug|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Release|x64.ActiveCfg = Release|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Release|x64.Build.0 = Release|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Release|x86.ActiveCfg = Release|Any CPU
+		{E0905779-DC7D-40A2-8F10-C20C30DA8EE8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

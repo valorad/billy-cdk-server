@@ -8,18 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Models\Graphs\*">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="GraphQL.Server.All" Version="7.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.19.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BillyCDK.DataAccess\BillyCDK.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

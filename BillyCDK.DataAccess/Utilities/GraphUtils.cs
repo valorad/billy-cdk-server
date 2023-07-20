@@ -1,4 +1,4 @@
-﻿namespace BillyCDK.App.Utilities;
+﻿namespace BillyCDK.DataAccess.Utilities;
 
 public class GraphUtils
 {

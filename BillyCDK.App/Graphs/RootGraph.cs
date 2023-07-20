@@ -1,4 +1,4 @@
-﻿namespace BillyCDK.App.Graphs;
+﻿namespace BillyCDK.DataAccess.Graphs;
 
 // Constructors are in this file
 

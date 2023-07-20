@@ -1,7 +1,8 @@
-﻿using BillyCDK.App.Models;
+﻿using BillyCDK.DataAccess.Models;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
-namespace BillyCDK.App.Database;
+namespace BillyCDK.DataAccess.Database;
 
 public class DBContext : IDBContext
 {

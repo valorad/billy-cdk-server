@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BillyCDK.App\BillyCDK.App.csproj" />
+    <ProjectReference Include="..\BillyCDK.DataAccess\BillyCDK.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

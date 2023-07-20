@@ -1,8 +1,8 @@
-﻿using BillyCDK.App.Models;
+﻿using BillyCDK.DataAccess.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace BillyCDK.App.Utilities;
+namespace BillyCDK.DataAccess.Utilities;
 
 public class DBUtils
 {

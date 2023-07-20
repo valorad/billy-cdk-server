@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Text;
 
-namespace BillyCDK.App.Utilities;
+namespace BillyCDK.DataAccess.Utilities;
 
 public class JsonUtils
 {

@@ -1,6 +1,6 @@
 using BillyCDK.App.Graphs;
-using BillyCDK.App.Models;
-using BillyCDK.App.Utilities;
+using BillyCDK.DataAccess.Models;
+using BillyCDK.DataAccess.Utilities;
 using GraphQL;
 using GraphQL.Types;
 

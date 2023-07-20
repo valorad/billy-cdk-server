@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace BillyCDK.App.Models;
+namespace BillyCDK.DataAccess.Models;
 
 public record Player(
     [property: BsonId]
